@@ -241,9 +241,13 @@ El nombre **MA 32-2** proviene de la versión original del producto (32 alarmas,
 como indica la etiqueta antigua en `Caja/especificaciones.svg`. La versión actual del firmware
 ofrece 4 horarios de 30 alarmas cada uno.
 
-## Autores y contacto
 
-Diseño, firmware y documentación: **Juan Pablo Ruiz** — Galeras Digital, Colombia.
+## Licencia
 
-- Correo: galerasdigital@gmail.com
-- Web: http://www.galerasdigital.com
+Este proyecto se distribuye bajo la licencia **MIT**. Consulte el archivo [`LICENSE`](LICENSE)
+para el texto completo.
+
+Las librerías `TECLADO.INC`, `LCD_4BITOPD877.INC`, `RETARDOS.INC`, `BUS_I2C.INC` y
+`DS1307.INC` derivan del libro *Microcontrolador PIC16F84. Desarrollo de proyectos*
+(E. Palacios, F. Remiro y L. López, Ed. Ra-Ma) y conservan los derechos de sus autores
+originales.
