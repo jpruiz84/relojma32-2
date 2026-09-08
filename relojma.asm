@@ -1,0 +1,2719 @@
+;**************************************** relojma.asm *****************************************************
+
+
+; ZONA DE DATOS *******************************************************************************************
+
+								
+	__CONFIG _CP_ALL & _WDT_ON & _BODEN_ON & _PWRTE_ON & _XT_OSC & _LVP_OFF & _CPD_OFF
+	; Configuración del microcontrolador
+
+	LIST	 P=16F877A		; Procesador utilizado.
+	INCLUDE  <P16F877A.INC>		; En este fichero se definen las etiquetas del PIC.
+
+	CBLOCK	0x20
+	NMENU
+	DATOTECLA
+	TEMPS
+	TEMPW
+	AMPM
+	NALARMA
+	NALARMAP
+	CONTADOR
+	HORAALARMA
+	MINUTOALARMA
+	DIAALARMA
+	VTIPOHORARIO
+	VTIPOHORARIO2
+	ESTADOALARMA
+	TIPOTIMBRE
+	TEMPROTAR
+	CONTROTAR
+	NALARMACERCANA
+	NALARMACERCANAF
+	HORADIF
+	MINUTODIF
+	HORADIFMENOR
+	MINUTODIFMENOR
+	MINUTOMENOR
+	CONTLEDLCD
+	TEMPHORA
+	PASSWA
+	PASSWB
+	PASSWA1
+	PASSWB1
+	CONTTECLADOWW
+	ESTADOCONTRASENA
+	DTIMBREC
+	DTIMBREL
+	SONADAALARMAMF
+	MENDIAV
+	CONTDIATH
+	ULTIMAALARMAD
+	TOTALADIAS
+	TEMPTECLAP
+	ENDC
+	
+TARRIBA	EQU	0x0E
+TABAJO	EQU	0x0D
+TENTER	EQU	0x0F
+TMENU	EQU	0x0C
+TAST	EQU	0x0A
+TNUM	EQU	0x0B
+
+
+#DEFINE  PINTIMBRE	PORTC,0			; Timbre por el puerto C bit 0 pin 15 
+#DEFINE  PINLEDLCD	PORTC,1			; Pin para la luz de fondo del LCD
+#DEFINE	 TIEMPOLCD	d'20'			; Define el tiempo en n*500ms de la duración
+						; de la luz del LCD
+#DEFINE  EEDDCONH	0xFE			; Direcciones donde se almacena la contraseña
+#DEFINE  EEDDCONB	0xFF
+#DEFINE	 EEDDESTACON	0xFD			; Dirección del estado de la contraseña
+#DEFINE  EEDDTIMBREC	0xFB			; Direcciones en la EPROM para la duracion de timbres
+#DEFINE  EEDDTIMBREL	0xFC
+#DEFINE  EEDDTHLUN	0xF1			; El día lunes esta en la dirección F2 porque Lunes es 1 + F1
+						; Domingo en la dirección F8, días de F2-F8
+
+
+; ZONA DE CÓDIGOS ******************************************************************************************
+
+	ORG 	0
+  	GOTO	INICIO
+	ORG	4
+	GOTO	INTERRPUCION
+
+	INCLUDE "Librerias\TECLADO.INC"
+
+
+INICIO
+;	MOVLW	0x18
+;	MOVWF	Hora
+;	MOVLW	0x32
+;	MOVWF	Minuto
+;	MOVLW	0x02
+;	MOVWF	DiaSemana
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	CALL	COMPALARMAS	
+	CLRF	PCLATH			; Pagina 0
+	
+	BCF	PINTIMBRE		; Se asegura que el timbre esta apagado		
+	CALL	Teclado_Inicializa	; Configura las líneas del teclado.
+
+	BSF	STATUS,RP0		; Pone a 1 el bit 5 del STATUS. Acceso al Banco 1.
+	MOVLW	0x07			; Todas las entradas digitales
+	MOVWF	ADCON1
+	BSF	OPTION_REG,INTEDG	; Interrupción INT de RB0 activada por flanco de bajada.
+	BSF	OPTION_REG,PSA		; Preescaler asignado al WDT
+	BSF	OPTION_REG,PS0		; Preescaler en 1:128 x 18ms
+	BSF	OPTION_REG,PS1
+	BSF	OPTION_REG,PS2
+	BSF	PORTB,0			; Coloca al RB0 como entrada
+	BCF	PORTA,1
+	BCF	PINTIMBRE		; Coloca al pin del timbre como salida
+	BCF	PINLEDLCD		; Coloca el pin de la luz de fondo del LCD como salida
+	BCF	STATUS,RP0
+	CALL	LCD_Inicializa		; Inicializa la pantalla y graba el logo en su memoria
+	CALL	DS1307_Inicializa
+
+	CALL	DS1307_Lee		; Lee los segundos en el DS1307 y comprueba el
+	BTFSS	Segundo,7		; valor del bit CH. Si es "1" salta toda la
+	GOTO	INICIO2			; inicialización de los registros y la puesta
+					; en hora inicial.
+	call	DS1307_CargaInicial	; Realiza la carga inicial 
+	MOVLW	EEDDESTACON		; Dirección de estado de la contraseña
+	CALL	EEDIR
+	CLRW				; Cuando se quita la pila
+	CALL	EEESCRIBIR		; Deshabilita la contraseña
+	
+
+
+INICIO2
+	BSF	PINLEDLCD
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	CALL	COMPALARMAS		; Compara las alamras	
+	CLRF	PCLATH			; Pagina 0
+	CALL	ARELOJ			; Actualiza la hora
+
+	MOVLW	b'10011000'		; Habilita la interrupción INT de RB0, RBI y la general.
+	MOVWF	INTCON
+	BCF	PINTIMBRE		
+	MOVLW	TIEMPOLCD
+	MOVWF	CONTLEDLCD
+	CLRF	SONADAALARMAMF
+	CALL	LCD_CursorOFF
+
+
+PRINCIPAL
+	SLEEP
+	GOTO	PRINCIPAL
+
+
+; ZONA DE INTERRUPCION ***************************************************************************************	
+INTERRPUCION
+	MOVWF	TEMPW
+	SWAPF	STATUS,W
+	MOVWF	TEMPS
+
+	BTFSC	INTCON,INTF		; Interrupción del reloj
+	CALL	ARELOJ			; Actualiza la hora
+	BTFSC	INTCON,INTF		; Interrupción del reloj
+	CALL	TESTEARALARMA
+
+	BTFSC	INTCON,RBIF		; Interrupción del teclado
+	GOTO	ITECLADO
+
+FININTERRUPCION
+	SWAPF	TEMPS,W			; Devuelve las variableds
+	MOVWF	STATUS
+	SWAPF	TEMPW,F
+	SWAPF	TEMPW,W
+
+	BCF	INTCON,RBIF		; Resetea las banderas de interrupción
+	BCF	INTCON,INTF
+	RETFIE
+
+
+; ZONA DE SUBRUTINAS ***************************************************************************************
+
+; INTERRUPCIÓN POR TECLADO **********************************************************************************
+ITECLADO
+	CALL	Teclado_LeeHex			; Obtiene el valor hexadecimal de la tecla pulsada.
+	MOVWF	TEMPTECLAP
+
+	BSF	PINLEDLCD			; Enciende la luz de fondo del LCD
+	MOVLW	TIEMPOLCD			; Inicilaliza el contador de luz LCD
+	MOVWF	CONTLEDLCD
+
+	MOVF	TEMPTECLAP,W
+	SUBLW	TMENU
+	BTFSC	STATUS,Z
+	GOTO	ITECLADOA			; Si se pulso la tecla Menu va a ITECLADOA
+
+	MOVF	TEMPTECLAP,W
+	SUBLW	TNUM
+	BTFSS	STATUS,Z
+	GOTO	FINITECLADO			; Si no se pulso el Numeral va a FINITECLADO
+	
+	BSF	PINTIMBRE			; Timbra
+	CALL	LCD_Inicializa			; Inicializa la pantalla y graba el logo en su memoria
+	CALL	LCD_Borra
+	CALL	MRINGON
+	CALL	Retardo_100ms
+	CALL	Teclado_EsperaDejePulsar	; Para que no se repita el mismo carácter 
+	BCF	PINTIMBRE			; Apaga el timbre
+	CALL	LCD_Inicializa			; Inicializa la pantalla y graba el logo en su memoria
+	CALL	LCD_Borra
+	GOTO	FINITECLADO			; Va a fin teclado
+
+
+
+ITECLADOA
+	CALL	Teclado_EsperaDejePulsar	; Para que no se repita el mismo carácter 
+	CALL	LCD_Inicializa			; Inicializa la pantalla y graba el logo en su memoria
+	CALL	LCD_Borra
+
+	MOVLW	EEDDESTACON			; Comprueba si el sistema piede o no contraseña
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	ESTADOCONTRASENA
+	BTFSS	ESTADOCONTRASENA,0
+	GOTO	ITECLADO1
+
+	CALL	LCD_Borra			; Pide la contraseña
+	CALL	MCONTRASENA
+	CALL	LCD_Linea2
+	MOVLW	0xFF
+	MOVWF	CONTTECLADOWW
+
+	CALL	Teclado_LeeHexww
+	MOVWF	PASSWA
+	SWAPF	PASSWA,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+	CALL	Teclado_LeeHexww
+	ADDWF	PASSWA,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+
+	CALL	Teclado_LeeHexww
+	MOVWF	PASSWB
+	SWAPF	PASSWB,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+	CALL	Teclado_LeeHexww
+	ADDWF	PASSWB,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+	
+	MOVLW	EEDDCONH				; Comprueba la contraseña
+	CALL	EEDIR
+	CALL	EELEER
+	SUBWF	PASSWA,W
+	BTFSS	STATUS,Z
+	GOTO	FINITECLADO			; Contraseña invalida
+
+	MOVLW	EEDDCONB
+	CALL	EEDIR
+	CALL	EELEER
+	SUBWF	PASSWB,W
+	BTFSS	STATUS,Z
+	GOTO	FINITECLADO			; Contraseña invalida
+
+ITECLADO1					
+	
+	CALL	LCD_Borra			; Borra y muestra el menu
+	MOVLW	'M'
+	CALL	LCD_Caracter
+	MOVLW	'E'
+	CALL	LCD_Caracter
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	MOVLW	'U'
+	CALL	LCD_Caracter
+
+	MOVLW	d'10'
+	CALL	LCD_PosicionLinea1
+
+	MOVLW	0x00			; Imprime los caracteres que conforman el logo
+	CALL	LCD_Caracter
+	MOVLW	0x01
+	CALL	LCD_Caracter
+	MOVLW	0x02
+	CALL	LCD_Caracter
+	MOVLW	0x03
+	CALL	LCD_Caracter
+	MOVLW	0x04
+	CALL	LCD_Caracter
+	MOVLW	0x05
+	CALL	LCD_Caracter
+
+	CLRF	NMENU
+	CALL	ACTMENU
+
+ITECLADO2	
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	CALL	INCNMENU
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	CALL	DECNMENU
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TMENU
+	BTFSC	STATUS,Z
+	GOTO	FINITECLADO
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSC	STATUS,Z
+	GOTO	ENTERMENU
+
+	CALL	ACTMENU
+
+	CALL	Teclado_EsperaDejePulsar	; Para que no se repita el mismo carácter 
+ 	GOTO	ITECLADO2
+
+
+ENTERMENU
+	MOVF	NMENU,W
+	BTFSC	STATUS,Z
+	CALL	FIJARRELOJ
+
+	MOVF	NMENU,W
+	SUBLW	0x01
+	BTFSC	STATUS,Z
+	CALL	FIJARALARMAS
+	
+	MOVF	NMENU,W
+	SUBLW	0x02
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	BTFSC	STATUS,Z
+	CALL	TIPOHORARIO
+	
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVF	NMENU,W
+	SUBLW	0x03
+	BTFSC	STATUS,Z
+	CALL	DEFCONTRASENA
+	CLRF	PCLATH			; Pagina 0
+
+
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVF	NMENU,W
+	SUBLW	0x04
+	BTFSC	STATUS,Z
+	CALL	DEFDURATIMBRES
+	CLRF	PCLATH			; Pagina 0
+
+
+FINITECLADO	
+	CALL	LCD_CursorOFF
+	CALL	LCD_Borra
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	CALL	COMPALARMAS	
+	CLRF	PCLATH			; Pagina 0
+	CALL	ARELOJ				; Para que muestre imediatamente la hora
+	GOTO	FININTERRUPCION
+
+
+ARELOJ
+
+	BSF	STATUS,RP0		; Acceso banco 1.
+	MOVLW	b'01000000'		; El bit INTEDG está en el lugar 6 del registro.
+	XORWF	OPTION_REG,F		; Para hacer interrupciones cada 500ms y así dar pulso a los :
+	BCF	STATUS,RP0		; Acceso banco 0.
+
+	DECF	CONTLEDLCD,F		; Decrementa a CONTLEDLCD para apagar la luz de fondo
+	BTFSC	STATUS,Z		; despues de un tiempo determinado
+	BCF	PINLEDLCD
+	
+	CALL	DS1307_Lee		; Lee la hora del DS1307
+	MOVF	Hora,W
+	MOVWF	TEMPHORA
+
+		
+	MOVF	Hora,W			; Para saber si es AM o PM
+	SUBLW	0x11			; Literal - Work, desde las 12 ya son PM
+	BCF	AMPM,0
+	BTFSS	STATUS,C
+	BSF	AMPM,0
+	
+
+	BCF	AMPM,1
+	MOVF	Hora,W
+	SUBLW	0x20			; Se deteca si la hora es 20 o 21
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+	MOVF	Hora,W
+	SUBLW	0x21			
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+	
+
+	MOVF	Hora,W			; Para saber si es mayor a 12
+	SUBLW	0x12			; L - W, desde las 13 se restan 12
+	BCF	AMPM,2			; Bit 2 de AMPM indica si es mayor a 12
+	BTFSS	STATUS,C
+	BSF	AMPM,2
+
+	CALL	LCD_Linea1
+	MOVLW	0x12			; Se coloca el 12 que se va a restar en W
+	BTFSC	AMPM,1
+	MOVLW	0x18			; Si Hora es 20 o 21 se coloca 0x28 para restar
+	BTFSC	AMPM,2			
+	SUBWF	Hora,F			; Si es mayor de 12 se resta
+	MOVF	Hora,W			; Si no mayor solo se pasa
+	BTFSC	STATUS,Z
+	ADDLW	0x12			; Si es cero se suman 12
+	CALL	LCD_Byte		; Se publica la hora
+
+	MOVLW	b'00001000'
+	XORWF	AMPM,F
+	MOVLW	':'
+	BTFSC	AMPM,3
+	MOVLW	':'	
+	CALL	LCD_Caracter
+
+	MOVF	Minuto,W
+	CALL	LCD_ByteCompleto
+
+	MOVLW	':'	
+	CALL	LCD_Caracter
+
+	MOVF	Segundo,W
+	CALL	LCD_ByteCompleto
+
+
+
+	MOVLW	'A'
+	BTFSC	AMPM,0
+	MOVLW	'P'
+	CALL	LCD_Caracter
+	MOVLW	'M'
+	CALL	LCD_Caracter
+
+	MOVLW	' '
+	CALL	LCD_Caracter
+
+	MOVLW	'-'
+	CALL	LCD_Caracter
+
+	MOVLW	' '
+	CALL	LCD_Caracter
+
+
+	MOVF	DiaSemana,W			; Coloca el día de la semana en W
+	CALL	MENDIA				; Publica el día de la semana de W
+
+
+
+	CALL	LCD_Linea2
+	
+	MOVLW	'P'	
+	CALL	LCD_Caracter
+	MOVLW	'R'	
+	CALL	LCD_Caracter
+	MOVLW	'O'	
+	CALL	LCD_Caracter
+	MOVLW	'X'	
+	CALL	LCD_Caracter
+
+
+	MOVLW	0x7E				; Imprime flecha a la derecha
+	CALL	LCD_Caracter
+
+	MOVF	NALARMACERCANA,F
+	BTFSS	STATUS,Z
+	GOTO	ARELOJ2
+	
+	CALL	MRINGOFF
+	GOTO	ARELOJ3
+
+	
+
+ARELOJ2	
+
+	MOVF	HORAALARMA,W
+	SUBLW	0x11			; L - W, desde las 12 ya son PM
+	BCF	AMPM,5
+	BTFSS	STATUS,C
+	BSF	AMPM,5
+
+	BCF	AMPM,6
+	MOVF	HORAALARMA,W
+	SUBLW	0x20			; Se deteca si la hora es 20 o 21
+	BTFSC	STATUS,Z
+	BSF	AMPM,6
+	MOVF	HORAALARMA,W
+	SUBLW	0x21			
+	BTFSC	STATUS,Z
+	BSF	AMPM,6
+	
+	MOVF	HORAALARMA,W
+	SUBLW	0x12			; L - W, desde las 13 se restan 12
+	BCF	AMPM,7			; Bit 2 de AMPM indica si es mayor a 12
+	BTFSS	STATUS,C
+	BSF	AMPM,7
+
+	MOVLW	0x12			; Se coloca el 12 que se va a restar en W
+	BTFSC	AMPM,6
+	MOVLW	0x18			; Si Hora es 20 o 21 se coloca 0x28 para restar
+	BTFSC	AMPM,7			
+	SUBWF	HORAALARMA,W		; Si es mayor de 12 se resta
+	BTFSS	AMPM,7	
+	MOVF	HORAALARMA,W		; Si no mayor solo se pasa
+	BTFSC	STATUS,Z
+	ADDLW	0x12			; Si es cero se suman 12
+	CALL	LCD_Byte		; Se publica la hora
+
+	MOVLW	':'	
+	CALL	LCD_Caracter
+	MOVF	MINUTOALARMA,W
+	CALL	LCD_ByteCompleto
+	MOVLW	'A'
+	BTFSC	AMPM,5
+	MOVLW	'P'
+	CALL	LCD_Caracter
+	MOVLW	'M'
+	CALL	LCD_Caracter
+
+
+	MOVLW	'-'
+	CALL	LCD_Caracter
+	MOVF	DIAALARMA,W			
+	CALL	MENDIA
+
+ARELOJ3
+	MOVF	TEMPHORA,W
+	MOVWF	Hora
+	
+	RETURN
+
+
+
+; SUBRUTINA FIJAR RELOJ *****************************************************************************************
+
+
+FIJARRELOJ
+	CALL	LCD_Borra
+	CALL	ARELOJ
+	CALL	LCD_Linea1
+	CALL	LCD_CursorON
+
+
+	MOVLW	d'1'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	MOVWF	Hora
+	SWAPF	Hora,F
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	ANDLW	b'00001111'
+	ADDWF	Hora,F
+
+	MOVLW	':'	
+	CALL	LCD_Caracter
+	MOVLW	d'5'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	MOVWF	Minuto
+	SWAPF	Minuto,F
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	ANDLW	b'00001111'
+	ADDWF	Minuto,F
+
+	MOVLW	':'	
+	CALL	LCD_Caracter
+	MOVLW	d'5'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	MOVWF	Segundo
+	SWAPF	Segundo,F
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	ANDLW	b'00001111'
+	ADDWF	Segundo,F
+
+
+
+FIJARRELOJ1
+	MOVLW	0x08
+	CALL	LCD_PosicionLinea1
+	MOVLW	'A'
+	BTFSC	AMPM,0
+	MOVLW	'P'
+	CALL	LCD_Caracter
+	MOVLW	'M'
+	CALL	LCD_Caracter
+	MOVLW	0x08
+	CALL	LCD_PosicionLinea1
+
+
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	MOVLW	b'00000001'
+	BTFSC	STATUS,Z
+	XORWF	AMPM,F
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	MOVLW	b'00000001'
+	BTFSC	STATUS,Z
+	XORWF	AMPM,F
+
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	FIJARRELOJ1
+
+
+	MOVF	Hora,W			; Se detecta si se introdujo las horas 12
+	SUBLW	0x12
+	BTFSS	STATUS,Z
+	GOTO	FIJARRELOJN		; Si no es así salta
+	MOVLW	0x12			; Si es así mira los casos de AM y PM que son
+	MOVWF	Hora			; especiales
+	BTFSS	AMPM,0
+	CLRF	Hora
+	GOTO	FIJARRELOJFECHA
+	
+
+FIJARRELOJN
+
+	BCF	AMPM,1			; Se mira si la hora es 9 u 8, si es así hay que sumar
+	MOVF	Hora,W			; 0x18 para convertir en 24HRS si no hay que sumar 0x12
+	SUBLW	0x09		
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+	MOVF	Hora,W
+	SUBLW	0x08		
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+
+	MOVLW	0x12
+	BTFSC	AMPM,1
+	MOVLW	0x18
+
+	BTFSC	AMPM,0
+	ADDWF	Hora,F
+
+
+FIJARRELOJFECHA
+
+	MOVLW	0x01
+	MOVWF	Dia
+	MOVLW	0x01
+	MOVWF	Mes
+	MOVLW	0x01
+	MOVWF	Anho
+
+
+	
+FIJARDIASEM
+	MOVLW	0x0B
+	CALL	LCD_PosicionLinea1
+
+	MOVLW	'-'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+
+
+	MOVF	DiaSemana,W			; Coloca el día de la semana en W
+	CALL	MENDIA				; Publica el día de la semana de W
+	MOVLW	0x0D
+	CALL	LCD_PosicionLinea1
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	CALL	INCDIASEM
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	CALL	DECDIASEM
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	FIJARDIASEM
+	
+	CLRWDT
+
+	CALL	DS1307_Escribe
+	CALL	LCD_CursorOFF
+	CLRWDT
+
+	RETURN
+
+	
+
+
+
+; SUBRUTINAS NUMERO DIASEMANA ****************************************************************************************
+INCDIASEM
+	INCF	DiaSemana,F
+	MOVLW	0x08
+	SUBWF	DiaSemana,W
+	BTFSC	STATUS,Z
+	CALL	RESTDIASEM
+	RETURN
+
+DECDIASEM
+	DECF	DiaSemana,F
+	BTFSS	STATUS,Z
+	RETURN
+	MOVLW	0x07
+	MOVWF	DiaSemana
+	RETURN
+
+RESTDIASEM
+	MOVLW	0x01
+	MOVWF	DiaSemana	
+	RETURN
+
+
+; SUBRUTINAS FIJAR ALARMAS ****************************************************************************************
+FIJARALARMAS
+	CLRF	VTIPOHORARIO
+	INCF	VTIPOHORARIO,F
+
+FIJARALARMASH
+	CALL	LCD_Borra
+	CALL	LCD_Linea1
+	CALL	LCD_CursorON
+	CALL	MENSAJEHORARIO
+
+	MOVF	VTIPOHORARIO,W
+	CALL	LCD_Nibble
+	
+	MOVLW	d'8'
+	CALL	LCD_PosicionLinea1	; Para que el cursor se muestre en la liena 3
+	
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	CALL	INCVTIPOHORARIOFA
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	CALL	DECVTIPOHORARIOFA
+
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	FIJARALARMASH	
+	GOTO 	FIJARALARMAS1	
+
+	
+INCVTIPOHORARIOFA
+	INCF	VTIPOHORARIO,F
+	MOVLW	0x05
+	SUBWF	VTIPOHORARIO,W
+	BTFSC	STATUS,Z
+	CALL	RESVTIPOHORARIOFA
+	RETURN
+
+DECVTIPOHORARIOFA
+	DECFSZ	VTIPOHORARIO,F
+	RETURN
+	MOVLW	0x04
+	MOVWF	VTIPOHORARIO
+	RETURN
+
+RESVTIPOHORARIOFA
+	CLRF	VTIPOHORARIO
+	INCF	VTIPOHORARIO,F
+	RETURN
+
+
+
+FIJARALARMAS1
+	CALL	LCD_CursorOFF
+	CLRF	NALARMA
+	INCF	NALARMA,F
+
+FIJARALARMAS1A
+	CALL	LCD_Borra
+	CALL	LCD_Linea1
+	CALL	MALARMAN
+	MOVF	NALARMA,W
+	
+	BSF 	PCLATH,3 			; Configura al PCLAHT para ir a la segunda página
+	BCF 	PCLATH,4 			; " " 
+	CALL	BINAD99
+	CLRF	PCLATH 				; Limpia al PCLAHT para estar en la primera página 
+
+	CALL	LCD_ByteCompleto
+	MOVLW	'-'
+	CALL	LCD_Caracter
+	MOVLW	'H'
+	CALL	LCD_Caracter
+	MOVF	VTIPOHORARIO,W
+	CALL	LCD_Nibble
+
+	MOVF	VTIPOHORARIO,W			; Mueve Vtipodehorario a contador
+	MOVWF	CONTADOR			
+	MOVF	NALARMA,W			; Guarda NALARMA en NALARMAP
+	MOVWF	NALARMAP
+	
+FIJARALARMAS1B					
+	DECFSZ	CONTADOR,F			; Si VTIPODEHORARIO es 1 NALARMAP=NARALMA
+	GOTO	FIJARALARMAS1BB
+	GOTO	FIJARALARMAS1C			; Si no es uno NALARMAP=NALARMA+VTIPODEHORARIO*30
+FIJARALARMAS1BB	
+	MOVLW	d'30'
+	ADDWF	NALARMAP,F
+	GOTO	FIJARALARMAS1B
+	
+FIJARALARMAS1C
+	MOVF	NALARMAP,W
+	BCF	STATUS,C
+	RLF	NALARMAP,W			; Multiplica NALARMAP por 2 y lo pasa a W
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	TIPOTIMBRE
+	ANDLW	b'00111111'
+	MOVWF	HORAALARMA
+	BCF	STATUS,C
+	RLF	NALARMAP,W			; Multiplica NALARMAP por 2 le suma 1 y lo pasa a W
+	ADDLW	0x01
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	ESTADOALARMA
+	ANDLW	b'01111111'
+	MOVWF	MINUTOALARMA
+	MOVF	TIPOTIMBRE,W
+	CALL	ROTAR6D
+	MOVWF	TIPOTIMBRE
+
+
+	CALL	LCD_Linea2
+	MOVF	HORAALARMA,W
+	SUBLW	0x11			; L - W, desde las 12 ya son PM
+	BCF	AMPM,0
+	BTFSS	STATUS,C
+	BSF	AMPM,0
+	
+
+	BCF	AMPM,1
+	MOVF	HORAALARMA,W
+	SUBLW	0x20			; Se deteca si la hora es 20 o 21
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+	MOVF	HORAALARMA,W
+	SUBLW	0x21			
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+	
+
+	MOVF	HORAALARMA,W
+	SUBLW	0x12			; L - W, desde las 13 se restan 12
+	BCF	AMPM,2			; Bit 2 de AMPM indica si es mayor a 12
+	BTFSS	STATUS,C
+	BSF	AMPM,2
+
+	MOVLW	0x12			; Se coloca el 12 que se va a restar en W
+	BTFSC	AMPM,1
+	MOVLW	0x18			; Si Hora es 20 o 21 se coloca 0x28 para restar
+	BTFSC	AMPM,2			
+	SUBWF	HORAALARMA,F		; Si es mayor de 12 se resta
+	MOVF	HORAALARMA,W		; Si no mayor solo se pasa
+	BTFSC	STATUS,Z
+	ADDLW	0x12			; Si es cero se suman 12
+	CALL	LCD_Byte		; Se publica la hora
+
+	MOVLW	':'	
+	CALL	LCD_Caracter
+	MOVF	MINUTOALARMA,W
+	CALL	LCD_ByteCompleto
+	MOVLW	'A'
+	BTFSC	AMPM,0
+	MOVLW	'P'
+	CALL	LCD_Caracter
+	MOVLW	'M'
+	CALL	LCD_Caracter
+
+	MOVLW	' '
+	CALL	LCD_Caracter
+	CALL	ACTTIPOTIMBRE
+
+	MOVLW	' '
+	CALL	LCD_Caracter
+	BTFSC	ESTADOALARMA,7
+	CALL	MENSAJEON
+	BTFSS	ESTADOALARMA,7
+	CALL	MENSAJEOFF
+	
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	CALL	INCNALARMA
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	CALL	DECNALARMA
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSC	STATUS,Z
+	CALL	FIJARUNAALARMA
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TMENU
+	BTFSS	STATUS,Z
+	GOTO	FIJARALARMAS1A
+	
+	RETURN
+
+	
+
+FIJARUNAALARMA
+	CALL	LCD_Linea2
+	CALL	LCD_CursorON
+
+
+	MOVLW	d'1'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	MOVWF	HORAALARMA
+	SWAPF	HORAALARMA,F
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	ANDLW	b'00001111'
+	ADDWF	HORAALARMA,F
+	MOVLW	':'	
+	CALL	LCD_Caracter
+	MOVLW	d'5'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	MOVWF	MINUTOALARMA
+	SWAPF	MINUTOALARMA,F
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	CALL	LCD_Nibble
+	ANDLW	b'00001111'
+	ADDWF	MINUTOALARMA,F
+
+FIJARUNAALARMA1A
+	MOVLW	0x05
+	CALL	LCD_PosicionLinea2			
+	MOVLW	'A'
+	BTFSC	AMPM,0
+	MOVLW	'P'
+	CALL	LCD_Caracter
+	MOVLW	'M'
+	CALL	LCD_Caracter
+	MOVLW	0x05
+	CALL	LCD_PosicionLinea2			
+
+
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	MOVLW	b'00000001'
+	BTFSC	STATUS,Z
+	XORWF	AMPM,F
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	MOVLW	b'00000001'
+	BTFSC	STATUS,Z
+	XORWF	AMPM,F
+
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	FIJARUNAALARMA1A
+
+	MOVLW	0x07
+	CALL	LCD_PosicionLinea2			
+
+	MOVLW	' '
+	CALL	LCD_Caracter
+
+FIJARUNAALARMA1
+	MOVLW	0x08
+	CALL	LCD_PosicionLinea2			
+	CALL	ACTTIPOTIMBRE
+	MOVLW	0x08
+	CALL	LCD_PosicionLinea2			
+
+
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	CALL	INCTIPOTIMBRE
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	CALL	DECTIPOTIMBRE
+
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	FIJARUNAALARMA1
+
+
+FIJARUNAALARMA2
+	MOVLW	0x0C
+	CALL	LCD_PosicionLinea2
+	BTFSC	ESTADOALARMA,7
+	CALL	MENSAJEON
+	BTFSS	ESTADOALARMA,7
+	CALL	MENSAJEOFF
+	MOVLW	0x0C
+	CALL	LCD_PosicionLinea2
+
+
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	MOVLW	b'10000000'
+	BTFSC	STATUS,Z
+	XORWF	ESTADOALARMA,F
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	MOVLW	b'10000000'
+	BTFSC	STATUS,Z
+	XORWF	ESTADOALARMA,F
+
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	FIJARUNAALARMA2
+
+
+	MOVF	HORAALARMA,W		; Se detecta si se introdujo las horas 12
+	SUBLW	0x12
+	BTFSS	STATUS,Z
+	GOTO	FIJARUNAALARMAN		; Si no es así salta
+	MOVLW	0x12			; Si es así mira los casos de AM y PM que son
+	MOVWF	HORAALARMA		; especiales
+	BTFSS	AMPM,0
+	CLRF	HORAALARMA
+	GOTO	FIJARUNAALARMAFIN
+	
+
+FIJARUNAALARMAN
+
+	BCF	AMPM,1			; Se mira si la hora es 9 u 8, si es así hay que sumar
+	MOVF	HORAALARMA,W			; 0x18 para convertir en 24HRS si no hay que sumar 0x12
+	SUBLW	0x09		
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+	MOVF	HORAALARMA,W
+	SUBLW	0x08		
+	BTFSC	STATUS,Z
+	BSF	AMPM,1
+
+	MOVLW	0x12
+	BTFSC	AMPM,1
+	MOVLW	0x18
+
+	BTFSC	AMPM,0
+	ADDWF	HORAALARMA,F
+
+FIJARUNAALARMAFIN
+	MOVF	NALARMAP,W
+	BCF	STATUS,C
+	RLF	NALARMAP,W
+	CALL	EEDIR
+
+	MOVLW	b'00111111'
+	ANDWF	HORAALARMA,F
+	MOVF	TIPOTIMBRE,W
+	CALL	ROTAR6I
+	ADDWF	HORAALARMA,W
+	CALL	EEESCRIBIR
+	BCF	STATUS,C
+	RLF	NALARMAP,W
+	ADDLW	0x01
+	CALL	EEDIR
+	
+	MOVF	MINUTOALARMA,W
+	ANDLW	b'01111111'
+	BTFSC	ESTADOALARMA,7
+	ADDLW	b'10000000'
+	CALL	EEESCRIBIR
+	CALL	LCD_CursorOFF
+	RETURN
+
+
+	
+
+INCNALARMA
+	INCF	NALARMA,F
+	MOVLW	d'31'
+	SUBWF	NALARMA,W
+	BTFSC	STATUS,Z
+	CALL	RESTNALARMA
+	RETURN
+
+DECNALARMA
+	DECF	NALARMA,F
+	BTFSS	STATUS,Z
+	RETURN
+	MOVLW	d'30'
+	MOVWF	NALARMA
+	RETURN
+
+RESTNALARMA
+	MOVLW	0x01
+	MOVWF	NALARMA
+	RETURN
+
+
+; SUBRUTINAS TIPO TIMBRE ******************************************************************************************
+
+INCTIPOTIMBRE
+	INCF	TIPOTIMBRE,F
+	MOVLW	d'4'
+	SUBWF	TIPOTIMBRE,W
+	BTFSC	STATUS,Z
+	CLRF	TIPOTIMBRE
+	RETURN
+
+DECTIPOTIMBRE
+	DECF	TIPOTIMBRE,F
+	MOVLW	0xFF
+	SUBWF	TIPOTIMBRE,W
+	BTFSS	STATUS,Z
+	RETURN
+	MOVLW	d'3'
+	MOVWF	TIPOTIMBRE
+	RETURN
+
+
+
+ACTTIPOTIMBRE
+	MOVF	TIPOTIMBRE,W
+	BTFSC	STATUS,Z
+	CALL	MENSAJE1TC
+	MOVF	TIPOTIMBRE,W
+	SUBLW	0x01
+	BTFSC	STATUS,Z
+	CALL	MENSAJE1TL
+	MOVF	TIPOTIMBRE,W
+	SUBLW	0x02
+	BTFSC	STATUS,Z
+	CALL	MENSAJE2TC
+	MOVF	TIPOTIMBRE,W
+	SUBLW	0x03
+	BTFSC	STATUS,Z
+	CALL	MENSAJE3TC
+	RETURN	
+
+
+; SUBRUTINAS NUMERO MENU ****************************************************************************************
+INCNMENU
+	INCF	NMENU,F
+	MOVLW	0x05
+	SUBWF	NMENU,W
+	BTFSC	STATUS,Z
+	CLRF	NMENU
+	RETURN
+
+DECNMENU
+	DECF	NMENU,F
+	MOVLW	0xFF
+	SUBWF	NMENU,W
+	BTFSS	STATUS,Z
+	RETURN
+	MOVLW	0x04
+	MOVWF	NMENU
+	RETURN
+
+
+; ZONA DE ESCRITURA LCD ****************************************************************************************
+
+
+MDURATIMBRES
+	CALL	LCD_Linea2
+	CALL	LCD_LineaEnBlanco
+	CALL	LCD_Linea2
+	MOVLW	'D'
+	CALL	LCD_Caracter
+	MOVLW	'u'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'.'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'm'
+	CALL	LCD_Caracter
+	MOVLW	'b'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'e'
+	CALL	LCD_Caracter
+	MOVLW	's'
+	RETURN
+
+MSI
+	MOVLW	'S'
+	CALL	LCD_Caracter
+	MOVLW	'I'
+	CALL	LCD_Caracter
+	RETURN
+MNO
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	MOVLW	'O'
+	CALL	LCD_Caracter
+	RETURN
+
+MCONTRASENA
+	MOVLW	'C'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	'n'
+	CALL	LCD_Caracter
+	MOVLW	't'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	's'
+	CALL	LCD_Caracter
+	MOVLW	'e'
+	CALL	LCD_Caracter
+	MOVLW	'ñ'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	RETURN
+
+
+MRINGON
+	MOVLW	0x05
+	CALL	LCD_PosicionLinea2			
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'R'
+	CALL	LCD_Caracter
+	MOVLW	'I'
+	CALL	LCD_Caracter
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	MOVLW	'G'
+	CALL	LCD_Caracter
+	MOVLW	'!'
+	CALL	LCD_Caracter
+	MOVLW	'!'
+	CALL	LCD_Caracter
+	MOVLW	d'4'
+	CALL	LCD_EnviaBlancos
+
+
+	RETURN
+
+MRINGOFF
+	MOVLW	d'5'
+	CALL	LCD_PosicionLinea2			
+	MOVLW	d'11'
+	CALL	LCD_EnviaBlancos
+	RETURN
+
+
+MENSAJE1TC
+	MOVLW	'1'
+	CALL	LCD_Caracter
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'C'
+	CALL	LCD_Caracter
+	RETURN
+
+
+MENSAJE1TL
+	MOVLW	'1'
+	CALL	LCD_Caracter
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'L'
+	CALL	LCD_Caracter
+	RETURN
+
+
+MENSAJE2TC
+	MOVLW	'2'
+	CALL	LCD_Caracter
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'C'
+	CALL	LCD_Caracter
+	RETURN
+
+MENSAJE3TC
+	MOVLW	'3'
+	CALL	LCD_Caracter
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'C'
+	CALL	LCD_Caracter
+	RETURN
+
+
+MENSAJEOFF
+	MOVLW	'O'
+	CALL	LCD_Caracter
+	MOVLW	'F'
+	CALL	LCD_Caracter
+	MOVLW	'F'
+	CALL	LCD_Caracter
+	RETURN
+
+MENSAJEON
+	MOVLW	'O'
+	CALL	LCD_Caracter
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	RETURN
+
+
+
+MENSAJEHORARIO
+	MOVLW	'H'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	':'
+	CALL	LCD_Caracter
+	RETURN
+
+
+MALARMAN
+	MOVLW	'A'
+	CALL	LCD_Caracter
+	MOVLW	'l'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'm'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	':'
+	CALL	LCD_Caracter
+
+	RETURN
+
+
+MVERSION
+	MOVLW	'V'
+	CALL	LCD_Caracter
+	MOVLW	':'
+	CALL	LCD_Caracter
+	MOVLW	'0'
+	CALL	LCD_Caracter
+	MOVLW	'6'
+	CALL	LCD_Caracter
+	MOVLW	'/'
+	CALL	LCD_Caracter
+	MOVLW	'1'
+	CALL	LCD_Caracter
+	MOVLW	'2'
+	CALL	LCD_Caracter
+	RETURN
+
+MFRELOJ
+	CALL	LCD_Linea2
+	CALL	LCD_LineaEnBlanco
+	CALL	LCD_Linea2
+	MOVLW	'F'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'j'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'R'
+	CALL	LCD_Caracter
+	MOVLW	'e'
+	CALL	LCD_Caracter
+	MOVLW	'l'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	'j'
+	CALL	LCD_Caracter
+	RETURN
+
+MFALARMAS
+	CALL	LCD_Linea2
+	CALL	LCD_LineaEnBlanco
+	CALL	LCD_Linea2
+	MOVLW	'F'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'j'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'A'
+	CALL	LCD_Caracter
+	MOVLW	'l'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'm'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	's'
+	CALL	LCD_Caracter
+	RETURN
+
+MTHORARIO
+	CALL	LCD_Linea2
+	CALL	LCD_LineaEnBlanco
+	CALL	LCD_Linea2
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'p'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'd'
+	CALL	LCD_Caracter
+	MOVLW	'e'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'h'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+
+	RETURN
+
+MENCONTRASENA
+	CALL	LCD_Linea2
+	CALL	LCD_LineaEnBlanco
+	CALL	LCD_Linea2
+	CALL	MCONTRASENA
+	RETURN
+
+
+ACTMENU
+	MOVF	NMENU,W
+	BTFSC	STATUS,Z
+	GOTO	MFRELOJ
+	MOVF	NMENU,W
+	SUBLW	0x01
+	BTFSC	STATUS,Z
+	GOTO	MFALARMAS
+	MOVF	NMENU,W
+	SUBLW	0x02
+	BTFSC	STATUS,Z
+	GOTO	MTHORARIO
+	MOVF	NMENU,W
+	SUBLW	0x03
+	BTFSC	STATUS,Z
+	GOTO	MENCONTRASENA
+	MOVF	NMENU,W
+	SUBLW	0x04
+	BTFSC	STATUS,Z
+	GOTO	MDURATIMBRES
+	MOVF	NMENU,W
+
+
+	RETURN
+
+MLUNES
+	MOVLW	'L'
+	CALL	LCD_Caracter
+	MOVLW	'U'
+	CALL	LCD_Caracter
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	RETURN
+MMARTES
+	MOVLW	'M'
+	CALL	LCD_Caracter
+	MOVLW	'A'
+	CALL	LCD_Caracter
+	MOVLW	'R'
+	CALL	LCD_Caracter
+	RETURN
+MMIERCOLES
+	MOVLW	'M'
+	CALL	LCD_Caracter
+	MOVLW	'I'
+	CALL	LCD_Caracter
+	MOVLW	'E'
+	CALL	LCD_Caracter
+	RETURN
+MJUEVES
+	MOVLW	'J'
+	CALL	LCD_Caracter
+	MOVLW	'U'
+	CALL	LCD_Caracter
+	MOVLW	'E'
+	CALL	LCD_Caracter
+	RETURN
+MVIERNES
+	MOVLW	'V'
+	CALL	LCD_Caracter
+	MOVLW	'I'
+	CALL	LCD_Caracter
+	MOVLW	'E'
+	CALL	LCD_Caracter
+	RETURN
+MSABADO
+	MOVLW	'S'
+	CALL	LCD_Caracter
+	MOVLW	'A'
+	CALL	LCD_Caracter
+	MOVLW	'B'
+	CALL	LCD_Caracter
+	RETURN
+MDOMINGO
+	MOVLW	'D'
+	CALL	LCD_Caracter
+	MOVLW	'O'
+	CALL	LCD_Caracter
+	MOVLW	'M'
+	CALL	LCD_Caracter
+	RETURN
+
+; Publica en el LCD el día de la semana dependiendo del dato almacenado en W
+
+MENDIA
+	MOVWF	MENDIAV
+	MOVF	MENDIAV,W
+	SUBLW	0x01
+	BTFSC	STATUS,Z
+	GOTO	MLUNES
+	MOVF	MENDIAV,W
+	SUBLW	0x02
+	BTFSC	STATUS,Z
+	GOTO	MMARTES
+	MOVF	MENDIAV,W
+	SUBLW	0x03
+	BTFSC	STATUS,Z
+	GOTO	MMIERCOLES
+	MOVF	MENDIAV,W
+	SUBLW	0x04
+	BTFSC	STATUS,Z
+	GOTO	MJUEVES
+	MOVF	MENDIAV,W
+	SUBLW	0x05
+	BTFSC	STATUS,Z
+	GOTO	MVIERNES
+	MOVF	MENDIAV,W
+	SUBLW	0x06
+	BTFSC	STATUS,Z
+	GOTO	MSABADO
+	MOVF	MENDIAV,W
+	SUBLW	0x07
+	BTFSC	STATUS,Z
+	GOTO	MDOMINGO
+	RETURN
+
+
+; SUBRUTINA ROTAR A LA DERECHA *****************************************************************************
+ROTAR6D
+	MOVWF	TEMPROTAR
+	MOVLW	d'6'
+	MOVWF	CONTROTAR
+ROTAR6D1
+	BCF	STATUS,C
+	RRF	TEMPROTAR,F
+	DECFSZ	CONTROTAR,F
+	GOTO	ROTAR6D1
+	MOVF	TEMPROTAR,W
+	RETURN
+	
+ROTAR6I
+	MOVWF	TEMPROTAR
+	MOVLW	d'6'
+	MOVWF	CONTROTAR
+ROTAR6I1
+	BCF	STATUS,C
+	RLF	TEMPROTAR,F
+	DECFSZ	CONTROTAR,F
+	GOTO	ROTAR6I1
+	MOVF	TEMPROTAR,W
+	RETURN
+
+
+
+
+; Testear Alarma ***************************************************************************************************
+
+TESTEARALARMA
+
+	MOVF	DIAALARMA,W
+	SUBWF	DiaSemana,W
+	BTFSS	STATUS,Z
+	GOTO	TESTEARALARMANO
+
+	MOVF	HORAALARMA,W
+	SUBWF	Hora,W
+	BTFSS	STATUS,Z
+	GOTO	TESTEARALARMANO
+
+	MOVF	MINUTOALARMA,W
+	SUBWF	Minuto,W
+	BTFSS	STATUS,Z
+	GOTO	TESTEARALARMANO
+	
+	MOVF	SONADAALARMAMF,F
+	BTFSS	STATUS,Z
+	RETURN
+
+	; El timbre sonara
+	INCF	SONADAALARMAMF,F	; Setea la bandera de alarma sonada
+					; El timbre va a sonar, lee las duraciones
+	MOVLW	EEDDTIMBREC		; Posición en EEPROM de timbre corto
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	DTIMBREC
+	MOVLW	EEDDTIMBREL		; Posición en EEPROM de timbre largo
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	DTIMBREL
+
+	; Lee el timpo de timbrado
+	MOVF	VTIPOHORARIO,W		; Mueve Vtipodehorario a contador
+	MOVWF	CONTADOR	
+	MOVF	NALARMA,W		; Guarda NALARMA en NALARMAP
+	MOVWF	NALARMAP
+	
+TESTEARALARMA1B					
+	DECFSZ	CONTADOR,F		; Si VTIPODEHORARIO es 1 NALARMAP=NARALMA
+	GOTO	TESTEARALARMA1BB
+	GOTO	TESTEARALARMA1C		; Si no es uno NALARMAP=NALARMA+VTIPODEHORARIO*30
+TESTEARALARMA1BB	
+	MOVLW	d'30'
+	ADDWF	NALARMAP,F
+	GOTO	TESTEARALARMA1B
+
+TESTEARALARMA1C
+	MOVF	NALARMAP,W	
+	BCF	STATUS,C
+	RLF	NALARMAP,W
+	CALL	EEDIR
+	CALL	EELEER
+	CALL	ROTAR6D
+	ANDLW	b'00000011'
+	MOVWF	TIPOTIMBRE
+
+
+	BSF	PINLEDLCD		; Enciende la luz del LCD
+	MOVF	TIPOTIMBRE,W
+	BTFSC	STATUS,Z
+	GOTO	TIMBRAR1TC
+	MOVF	TIPOTIMBRE,W
+	SUBLW	0x01
+	BTFSC	STATUS,Z
+	GOTO	TIMBRAR1TL
+	MOVF	TIPOTIMBRE,W
+	SUBLW	0x02
+	BTFSC	STATUS,Z
+	GOTO	TIMBRAR2TC
+	MOVF	TIPOTIMBRE,W
+	SUBLW	0x03
+	BTFSC	STATUS,Z
+	GOTO	TIMBRAR3TC
+
+TESTEARALARMAFIN
+	CALL	Retardo_1s
+	CALL	LCD_Inicializa		; Inicializa la pantalla y graba el logo en su memoria
+	MOVLW	TIEMPOLCD		; Inicilaliza el contador de luz LCD
+	MOVWF	CONTLEDLCD
+
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	CALL	COMPALARMAS		; Comprueba cual es la próxiam alarma
+	CLRF	PCLATH			; Pagina 0
+	CLRWDT
+	RETURN		
+
+TESTEARALARMANO
+	CLRF	SONADAALARMAMF		; No se sono alarma, resetea la bandera
+	RETURN
+	
+	
+
+TIMBRAR1TC
+	BSF	PINTIMBRE
+	CALL	MRINGON
+	MOVF	DTIMBREC,W
+	CALL	Retardo_wseg
+	BCF	PINTIMBRE
+	CALL	MRINGOFF
+	GOTO	TESTEARALARMAFIN
+
+TIMBRAR1TL
+	BSF	PINTIMBRE
+	CALL	MRINGON
+	MOVF	DTIMBREL,W
+	CALL	Retardo_wseg
+	BCF	PINTIMBRE
+	CALL	MRINGOFF
+	GOTO	TESTEARALARMAFIN
+
+TIMBRAR2TC
+	BSF	PINTIMBRE
+	CALL	MRINGON
+	MOVF	DTIMBREC,W
+	CALL	Retardo_wseg
+	BCF	PINTIMBRE
+	CALL	MRINGOFF
+	CALL	Retardo_1s
+	BSF	PINTIMBRE
+	CALL	MRINGON
+	MOVF	DTIMBREC,W
+	CALL	Retardo_wseg
+	BCF	PINTIMBRE
+	CALL	MRINGOFF
+	GOTO	TESTEARALARMAFIN
+	
+
+TIMBRAR3TC
+	BSF	PINTIMBRE
+	CALL	MRINGON
+	MOVF	DTIMBREC,W
+	CALL	Retardo_wseg
+	BCF	PINTIMBRE
+	CALL	MRINGOFF
+	CALL	Retardo_1s
+	BSF	PINTIMBRE
+	CALL	MRINGON
+	MOVF	DTIMBREC,W
+	CALL	Retardo_wseg
+	BCF	PINTIMBRE
+	CALL	MRINGOFF
+	CALL	Retardo_1s
+	BSF	PINTIMBRE
+	CALL	MRINGON
+	MOVF	DTIMBREC,W
+	CALL	Retardo_wseg
+	BCF	PINTIMBRE
+	CALL	MRINGOFF
+	GOTO	TESTEARALARMAFIN
+
+
+
+Teclado_LeeHexww	
+	MOVF	CONTTECLADOWW,F
+	BTFSC	STATUS,Z
+	GOTO	Teclado_LeeHexwwe
+
+Teclado_LeeHexww1	
+	CLRWDT
+	CALL	Retardo_20ms
+	DECF	CONTTECLADOWW,F
+	BTFSC	STATUS,Z
+	GOTO	Teclado_LeeHexwwe
+
+	CALL	Teclado_LeeHex
+	BTFSS	STATUS,C
+	GOTO	Teclado_LeeHexww1
+	MOVWF	TEMPTECLADO
+	CALL	Teclado_EsperaDejePulsar
+	MOVF	TEMPTECLADO,W
+	ANDLW	0x0F
+	RETURN	
+
+Teclado_LeeHexwwe
+	MOVLW	0x0F
+	RETURN
+
+
+
+; ZONA DE LIBRERIAS ****************************************************************************************
+	
+	INCLUDE "Librerias\LCD_4BITOPD877.INC"
+	INCLUDE "Librerias\RETARDOS.INC"
+	INCLUDE "Librerias\BUS_I2C.INC"
+	INCLUDE "Librerias\DS1307.INC"
+	INCLUDE "Librerias\EEPROM.INC"
+
+FINPAGINA0
+	IF (FINPAGINA0 > 0x800)
+		ERROR	"Atención: La pagina 0 ha sobrepasado su rango"
+		MESSG	"de los primeros 7000"
+	ENDIF
+; PAGINA 1 ****************************************************************************************************
+; PAGINA 1 ****************************************************************************************************
+; PAGINA 1 ****************************************************************************************************
+; PAGINA 1 ****************************************************************************************************
+; PAGINA 1 ****************************************************************************************************
+
+	ORG	0x900
+
+	INCLUDE "Librerias\BINAD99.INC"
+
+; SUBRUTINA DEFINIR CONTRASEÑA *********************************************************************************
+DEFCONTRASENA
+	CLRF 	PCLATH				; Pagina 0
+	CALL	LCD_Borra
+	MOVLW	'P'
+	CALL	LCD_Caracter
+	MOVLW	'e'
+	CALL	LCD_Caracter
+	MOVLW	'd'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	CALL	MCONTRASENA
+
+	
+	MOVLW	EEDDESTACON
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	ESTADOCONTRASENA
+
+DEFCONTRASENA2
+	CLRF 	PCLATH				; Pagina 0
+	CALL	LCD_CursorON
+	CALL	LCD_Linea2
+	BTFSC	ESTADOCONTRASENA,0
+	CALL	MSI
+	BTFSS	ESTADOCONTRASENA,0
+	CALL	MNO
+	CALL	LCD_Linea2
+
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	MOVLW	b'00000001'
+	BTFSC	STATUS,Z
+	XORWF	ESTADOCONTRASENA,F
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	MOVLW	b'00000001'
+	BTFSC	STATUS,Z
+	XORWF	ESTADOCONTRASENA,F
+	
+	MOVF	DATOTECLA,W		; Si se oprime la tecla menu sali sin hace nada
+	SUBLW	TMENU
+	BTFSC	STATUS,Z
+	RETURN	
+
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	DEFCONTRASENA2
+	
+	BTFSC	ESTADOCONTRASENA,0	; Si se dice que SI se define nueva contraseña
+	GOTO	DEFCONTRASENA3
+
+	CLRF	PCLATH			; Página 0
+	MOVLW	EEDDESTACON			; Si se dice que NO se guarda el estado
+	CALL	EEDIR
+	MOVF	ESTADOCONTRASENA,W
+	CALL	EEESCRIBIR
+	RETURN
+	
+	
+
+
+DEFCONTRASENA3
+	CLRF	PCLATH			; Página 0
+	CALL	LCD_Borra
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	CALL	MCONTRASENA
+	CALL	LCD_Linea2
+
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	MOVWF	PASSWA
+	SWAPF	PASSWA,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	ADDWF	PASSWA,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	MOVWF	PASSWB
+	SWAPF	PASSWB,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	ADDWF	PASSWB,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+
+
+	CALL	LCD_Borra
+	MOVLW	'R'
+	CALL	LCD_Caracter
+	MOVLW	'N'
+	CALL	LCD_Caracter
+	MOVLW	' '
+	CALL	LCD_Caracter
+	CALL	MCONTRASENA
+	CALL	LCD_Linea2
+
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	MOVWF	PASSWA1
+	SWAPF	PASSWA1,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	ADDWF	PASSWA1,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	MOVWF	PASSWB1
+	SWAPF	PASSWB1,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+	MOVLW	d'9'
+	CALL	Teclado_Leemax
+	ADDWF	PASSWB1,F
+	MOVLW	'*'
+	CALL	LCD_Caracter
+
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVF	PASSWA,W
+	SUBWF	PASSWA1,W
+	BTFSS	STATUS,Z
+	GOTO	DEFCONTRASENAER
+	MOVF	PASSWB,W
+	SUBWF	PASSWB1,W
+	BTFSS	STATUS,Z
+	GOTO	DEFCONTRASENAER
+
+	CLRF	PCLATH			; Pagina 0
+	MOVLW	EEDDCONH	
+	CALL	EEDIR
+	MOVF	PASSWA,W
+	CALL	EEESCRIBIR
+	MOVLW	EEDDCONB
+	CALL	EEDIR
+	MOVF	PASSWB,W
+	CALL	EEESCRIBIR
+	MOVLW	EEDDESTACON			; Si se dice que NO se guarda el estado
+	CALL	EEDIR
+	MOVF	ESTADOCONTRASENA,W
+	CALL	EEESCRIBIR
+
+	CALL	LCD_Borra
+	CALL	MCONTRASENA
+
+	CALL	LCD_Linea2
+	MOVLW	'c'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'm'
+	CALL	LCD_Caracter
+	MOVLW	'b'
+	CALL	LCD_Caracter
+	MOVLW	'i'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	MOVLW	'd'
+	CALL	LCD_Caracter
+	MOVLW	'a'
+	CALL	LCD_Caracter
+	CALL	Teclado_LeeHexw
+	RETURN
+
+
+DEFCONTRASENAER
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_Borra
+	CALL	MCONTRASENA
+	MOVLW	' '
+	CALL	LCD_Caracter
+	MOVLW	'e'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	MOVLW	'o'
+	CALL	LCD_Caracter
+	MOVLW	'r'
+	CALL	LCD_Caracter
+	CALL	Teclado_LeeHexw
+	RETURN
+
+
+; SUBRUTINA DEFINIR DURACION DE TIMBRES *********************************************************************************
+
+DEFDURATIMBRES
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_Borra
+	CALL	LCD_CursorON
+
+	MOVLW	EEDDTIMBREC		; Posición en EEPROM de timbre corto
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	DTIMBREC
+	MOVLW	EEDDTIMBREL		; Posición en EEPROM de timbre largo
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	DTIMBREL
+
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'C'
+	CALL	LCD_Caracter
+	MOVLW	':'
+	CALL	LCD_Caracter
+	MOVLW	d'8'
+	CALL	LCD_PosicionLinea2
+	CALL	MVERSION			
+
+DEFDURATIMBRES1
+	CLRF	PCLATH			; Pagina 0
+	MOVLW	d'3'
+	CALL	LCD_PosicionLinea1			
+	MOVF	DTIMBREC,W
+	ADDLW	0x01
+	BSF 	PCLATH,3 			; Configura al PCLAHT para ir a la segunda página
+	BCF 	PCLATH,4 			; " " 
+	CALL	BINAD99
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_ByteCompleto
+	MOVLW	's'
+	CALL	LCD_Caracter
+	MOVLW	d'3'
+	CALL	LCD_PosicionLinea1			
+
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	INCF	DTIMBREC,F
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	DECF	DTIMBREC,F
+
+	MOVLW	b'00001111'
+	ANDWF	DTIMBREC,F
+
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	DEFDURATIMBRES1
+
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_Borra
+	MOVLW	'T'
+	CALL	LCD_Caracter
+	MOVLW	'L'
+	CALL	LCD_Caracter
+	MOVLW	':'
+	CALL	LCD_Caracter
+
+DEFDURATIMBRES2
+	CLRF	PCLATH			; Pagina 0
+	MOVLW	d'3'
+	CALL	LCD_PosicionLinea1
+	MOVF	DTIMBREL,W
+	ADDLW	0x01
+	BSF 	PCLATH,3 			; Configura al PCLAHT para ir a la segunda página
+	BCF 	PCLATH,4 			; " " 
+	CALL	BINAD99
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_ByteCompleto
+	MOVLW	's'
+	CALL	LCD_Caracter
+	MOVLW	d'3'
+	CALL	LCD_PosicionLinea1			
+
+	CALL	Teclado_LeeHexw
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	INCF	DTIMBREL,F
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	DECF	DTIMBREL,F
+
+	MOVLW	b'00001111'
+	ANDWF	DTIMBREL,F
+
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	DEFDURATIMBRES2
+
+	MOVLW	EEDDTIMBREC		; Posición en EEPROM de timbre corto
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	MOVF	DTIMBREC,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEESCRIBIR
+	MOVLW	EEDDTIMBREL		; Posición en EEPROM de timbre corto
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	MOVF	DTIMBREL,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEESCRIBIR
+
+	RETURN
+
+; SUBRUTINA TIPO DE HORARIO ****************************************************************************************
+
+TIPOHORARIO
+	CLRF	CONTDIATH		; Inicializa CONTDIATH en 1
+	INCF	CONTDIATH,F
+
+TIPOHORARIO1
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_Borra
+	MOVF	CONTDIATH,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	MENDIA
+	MOVLW	':'
+	CALL	LCD_Caracter
+
+	CLRF	PCLATH			; Pagina 0
+	MOVLW	EEDDTHLUN		; Coloca la posición en la eeprom del día
+	ADDWF	CONTDIATH,W
+	CALL	EEDIR
+	CALL	EELEER
+	MOVWF	VTIPOHORARIO
+	BTFSC	STATUS,Z
+	CALL	MENSAJEOFF		; Si VTIPOHORARIO es cero manda el mensaje OFF
+	MOVF	VTIPOHORARIO,W
+	BTFSS	STATUS,Z
+	CALL	LCD_Nibble		; Si es diferente de cero lo saca como nibbl
+
+	CLRF	PCLATH			; Pagina 0
+	CALL	Teclado_LeeHexw
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	CALL	INCCONTDIA
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	CALL	DECCONTDIA
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSC	STATUS,Z
+	CALL	FIJARTHORARIODIA
+
+	MOVF	DATOTECLA,W
+	SUBLW	TMENU
+	BTFSS	STATUS,Z
+	GOTO	TIPOHORARIO1
+	RETURN
+
+INCCONTDIA
+	INCF	CONTDIATH,F
+	MOVLW	0x08
+	SUBWF	CONTDIATH,W
+	BTFSC	STATUS,Z
+	GOTO	INCCONTDIA1
+	RETURN
+INCCONTDIA1
+	CLRF	CONTDIATH
+	INCF	CONTDIATH,F
+	RETURN
+
+DECCONTDIA
+	DECF	CONTDIATH,F
+	BTFSS	STATUS,Z
+	RETURN
+	MOVLW	0x07
+	MOVWF	CONTDIATH
+	RETURN
+
+FIJARTHORARIODIA
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_CursorON
+	CALL	LCD_Borra
+	MOVF	CONTDIATH,W
+	CALL	MENDIA
+	MOVLW	':'
+	CALL	LCD_Caracter
+
+
+	MOVF	VTIPOHORARIO,F
+	BTFSC	STATUS,Z
+	CALL	MENSAJEOFF
+	MOVF	VTIPOHORARIO,W
+	BTFSS	STATUS,Z
+	CALL	LCD_Nibble
+	
+	MOVLW	d'4'
+	CALL	LCD_PosicionLinea1	; Para que el cursor se muestre en la liena 3
+	
+	CALL	Teclado_LeeHexw
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVWF	DATOTECLA
+	SUBLW	TABAJO
+	BTFSC	STATUS,Z
+	CALL	INCVTIPOHORARIO
+	
+	MOVF	DATOTECLA,W
+	SUBLW	TARRIBA
+	BTFSC	STATUS,Z
+	CALL	DECVTIPOHORARIO
+
+	MOVF	DATOTECLA,W
+	SUBLW	TENTER
+	BTFSS	STATUS,Z
+	GOTO	FIJARTHORARIODIA	
+
+
+	MOVLW	EEDDTHLUN		; Coloca la posición en la eerom del día
+	ADDWF	CONTDIATH,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	MOVF	VTIPOHORARIO,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEESCRIBIR
+	CLRF	PCLATH			; Pagina 0
+	CALL	LCD_CursorOFF
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+
+
+	RETURN
+
+
+INCVTIPOHORARIO
+	INCF	VTIPOHORARIO,F
+	MOVLW	0x05
+	SUBWF	VTIPOHORARIO,W
+	BTFSC	STATUS,Z
+	CLRF	VTIPOHORARIO
+	RETURN
+
+DECVTIPOHORARIO
+	DECF	VTIPOHORARIO,F
+	MOVLW	0xFF
+	SUBWF	VTIPOHORARIO,W
+	BTFSS	STATUS,Z
+	RETURN
+	MOVLW	0x04
+	MOVWF	VTIPOHORARIO
+	RETURN
+
+
+; COMPROBAR ALARMAS ****************************************************************************************
+; Comprueba cual es la alarma mas sercana
+
+INCDIASEMANA
+	INCF	DiaSemana,F
+	MOVLW	0x08
+	SUBWF	DiaSemana,W
+	BTFSC	STATUS,Z
+	GOTO	INCDIASEMANA1
+	CLRF	Hora			; Resetea hora y minuto para que detecte la primera
+	CLRF	Minuto			; alarma del siguiente día
+	RETURN
+INCDIASEMANA1
+	CLRF	DiaSemana
+	INCF	DiaSemana,F
+	CLRF	Hora			; Resetea hora y minuto para que detecte la primera
+	CLRF	Minuto			; alarma del siguiente día
+	RETURN
+
+; Inicio subrutina comparar alarmas
+
+COMPALARMAS
+	CLRF	NALARMA
+	INCF	NALARMA,F
+	MOVLW	0x07			; Coloca el día domingo en CONTDIATH
+	MOVWF	CONTDIATH
+	CLRF	TOTALADIAS		; Resetea TOTALDIAS
+
+COMPALARMASDZ
+	MOVLW	EEDDTHLUN		; Coloca la posición en la eeprom del día	
+	ADDWF	CONTDIATH,W		; Empieza a comprobar desde el Domingo hacia abajo
+	CLRF	PCLATH			; si el día esta o no activado
+	CALL	EEDIR
+	CLRF	PCLATH			; Pagina 0
+	CALL	EELEER
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	ADDWF	TOTALADIAS,F		; Va almacenando en TOTALDIAS
+	DECFSZ	CONTDIATH,F
+	GOTO	COMPALARMASDZ
+	
+	CLRF	NALARMACERCANA		; Si TOTALDIAS es cero es porque ningun día esta activado
+	MOVF	TOTALADIAS,F		; coloca alarma cercana en cero para decir que no hay alarmas
+	BTFSC	STATUS,Z		; y sale
+	RETURN
+
+; Si algun o algunos días esta activado continua		
+	CLRF	NALARMACERCANAF		; Resetea la bandera de alarma cercana
+	CLRF	PCLATH			; Pagina 0
+;	CALL	DS1307_Lee		; Lee la hora actual del DS1307
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	CLRF	ULTIMAALARMAD		; Resetea la bandera de última alarma
+
+COMPALARMAS1Y
+	MOVLW	0xFF			; Asigna el valor máximo a las diferencias menores
+	MOVWF	HORADIFMENOR
+	MOVWF	MINUTODIFMENOR
+	MOVWF	MINUTOMENOR
+
+	MOVF	DiaSemana,W		; Inicia con el día de la semana actual
+	MOVWF	DIAALARMA		; Guarda día semana en DIAALARMA
+	MOVLW	EEDDTHLUN		; Coloca la posición en la eeprom del día
+	ADDWF	DiaSemana,W		; Lee el tipo de horario del día actual
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	CLRF	PCLATH			; Pagina 0
+	CALL	EELEER
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVWF	VTIPOHORARIO
+	BTFSS	STATUS,Z
+	GOTO	COMPALARMAS1Z		; Si esta activada continua
+	CALL	INCDIASEMANA		; Si ese día esta desactivado incrementa DiaSemana e inicia de nuevo
+	GOTO	COMPALARMAS1Y
+
+
+; Si encuentra un día donde esta activada la alarma evelua ese día
+COMPALARMAS1Z
+	CLRF	NALARMA
+	INCF	NALARMA,F
+	CLRF	NALARMACERCANA		; Inicializa NALARMACERCANA
+
+COMPALARMAS1ZA
+	MOVF	VTIPOHORARIO,W		; Multiplica Tipo de Horario por 30 y lo asigna
+	MOVWF	CONTADOR		; a NALARMAP, puntero de la alarma
+	MOVF	NALARMA,W
+	MOVWF	NALARMAP
+	
+COMPALARMAS1ZB
+	DECFSZ	CONTADOR,F
+	GOTO	COMPALARMAS1ZBB
+	GOTO	COMPALARMAS1
+COMPALARMAS1ZBB	
+	MOVLW	d'30'
+	ADDWF	NALARMAP,F
+	GOTO	COMPALARMAS1ZB
+	
+COMPALARMAS1
+	MOVF	NALARMAP,W		; Multiplica por 2 a NALARMA para leer los datos en los
+	BCF	STATUS,C		; dos registros de la EEPROM
+	RLF	NALARMAP,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	CLRF	PCLATH			; Pagina 0
+	CALL	EELEER
+	ANDLW	b'00111111'
+	MOVWF	HORAALARMA		; Lee hora alarma
+	BCF	STATUS,C
+	RLF	NALARMAP,W
+	ADDLW	0x01
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	CLRF	PCLATH			; Pagina 0
+	CALL	EELEER
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVWF	ESTADOALARMA		; Lee el estado de la alarma
+	ANDLW	b'01111111'
+	MOVWF	MINUTOALARMA		; Lee el minuto de la alarma
+
+
+	BTFSS	ESTADOALARMA,7		; Si la alarma esta apagada
+	GOTO	COMPALARMAS2		; continua con otra
+
+	MOVF	Hora,W
+	SUBWF	HORAALARMA,W		; HORAALARMA - Hora = HORADIF
+	MOVWF	HORADIF
+	
+	MOVF	Minuto,W
+	SUBWF	MINUTOALARMA,W		; MINUTOALARMA - Minuto = MINUTODIF
+	MOVWF	MINUTODIF
+
+	MOVF	MINUTODIF,W		; Si la alarma esta en la hora y minuto actual sigue 
+	ADDWF	HORADIF,W		; con otra alarma
+	BTFSC	STATUS,Z
+	GOTO	COMPALARMAS2
+
+	MOVF	HORADIF,F		; Comprueba si esta en la misma hora
+	BTFSC	STATUS,Z
+	GOTO 	COMPALARMAS1B
+
+	MOVF	HORADIFMENOR,W
+	SUBWF	HORADIF,W		; HORADIF - HORADIFMENOR, si el resultado es negativo
+	BTFSC	STATUS,Z		; Si son iguales, trabaja la misma hora
+	GOTO	COMPALARMAS1A		
+	BTFSC	STATUS,C		; HORADIF es menor y Carry es cero
+	GOTO	COMPALARMAS2		; Si HORADIF es mayor sigue con otra alarma
+	MOVLW	0xFF
+	MOVWF	MINUTOMENOR
+
+COMPALARMAS1A				; No esta en la misma hora, mira el minuto menor
+	MOVF	MINUTOMENOR,W
+	SUBWF	MINUTOALARMA,W		; MINUTOALARMA - MINUTOMENOR
+	BTFSC	STATUS,C		; Si MINUTOMENOR es mayor a minuto alarma Carry cero
+	GOTO	COMPALARMAS2		; Sigue con otra alarma
+	MOVF	MINUTOALARMA,W		; Minuto menor es mayor entonces Minuto alarma es
+	MOVWF	MINUTOMENOR		; el nuevo minuto menor
+	GOTO	COMPALARMAS1C		; La coloca como la alarma mas cercana
+
+
+COMPALARMAS1B
+	MOVF	Minuto,W
+	SUBWF	MINUTOALARMA,W		; MINUTOALARMA - Minuto = MINUTODIF
+	BTFSS	STATUS,C		; Si minuto es mayor a minuto alarma Carry cero
+	GOTO	COMPALARMAS2
+	
+	MOVF	MINUTODIFMENOR,W
+	SUBWF	MINUTODIF,W		; MINUTODIF - MINUTODIFMENOR, si el resultado es negativo
+	BTFSC	STATUS,C		; MINUTODIF es menor y Carry es cero
+	GOTO	COMPALARMAS2		; Si MINUTODIF es mayor sigue con otra alarma
+	MOVF	MINUTODIF,W
+	MOVWF	MINUTODIFMENOR
+	
+
+	
+COMPALARMAS1C
+	MOVF	NALARMA,W		; Si tanto HORADIF como MINUTODIF son los menores
+	MOVWF	NALARMACERCANA		; entonces NALARMA es NALARMACERCANA
+	MOVF	HORADIF,W
+	MOVWF	HORADIFMENOR
+
+	
+COMPALARMAS2
+
+	INCF	NALARMA,F
+	MOVLW	d'31'
+	SUBWF	NALARMA,W
+	BTFSS	STATUS,Z		; Si NALARMA es 31 termina
+	GOTO	COMPALARMAS1ZA		; Si no continua con la siguiente alarma
+	
+	MOVF	NALARMACERCANA,W	
+	MOVWF	NALARMA
+
+	MOVF	NALARMACERCANA,F	; Comprueba si no hubo alarmas cercanas
+	BTFSS	STATUS,Z		; Comprueba si NALARMACERCANA es igual a 0x00
+	GOTO	COMPALARMAS2A		; Si hay alguna alarma cercana continua
+	MOVF	NALARMACERCANAF,F	; Comprueba la bandera si ya se paso por aqui
+	BTFSS	STATUS,Z		
+	GOTO	COMPALARMAS2A		; Si ya se paso continua
+	INCF	NALARMACERCANAF,F
+	INCF	Hora,F			; Si no hay alarmas cercanas incrementa la hora y vuelve a 
+	GOTO	COMPALARMAS1Y		; comparar sin leer la hora
+
+COMPALARMAS2A
+
+COMPALARMAS2AA
+	MOVF	VTIPOHORARIO,W		; Multiplica Tipo de Horario por 30 y lo asigna
+	MOVWF	CONTADOR		; a NALARMAP, puntero de la alarma
+	MOVF	NALARMA,W
+	MOVWF	NALARMAP
+	
+COMPALARMAS2AB
+	DECFSZ	CONTADOR,F
+	GOTO	COMPALARMAS2ABB
+	GOTO	COMPALARMAS2ACC
+COMPALARMAS2ABB	
+	MOVLW	d'30'
+	ADDWF	NALARMAP,F
+	GOTO	COMPALARMAS2AB
+
+COMPALARMAS2ACC
+	MOVF	NALARMAP,W
+	BCF	STATUS,C
+	RLF	NALARMAP,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	CLRF	PCLATH			; Pagina 0
+	CALL	EELEER
+	MOVWF	TIPOTIMBRE
+	ANDLW	b'00111111'
+	MOVWF	HORAALARMA
+	BCF	STATUS,C
+	RLF	NALARMAP,W
+	ADDLW	0x01
+	CLRF	PCLATH			; Pagina 0
+	CALL	EEDIR
+	CLRF	PCLATH			; Pagina 0
+	CALL	EELEER
+	MOVWF	ESTADOALARMA
+	ANDLW	b'01111111'
+	MOVWF	MINUTOALARMA
+	MOVF	TIPOTIMBRE,W
+	CLRF	PCLATH			; Pagina 0
+	CALL	ROTAR6D
+	BSF 	PCLATH,3 		; Pagina 1
+	BCF 	PCLATH,4 
+	MOVWF	TIPOTIMBRE
+
+	
+	MOVLW	d'8'			; Si se ha incrementado mas de 8 veces el día sale
+	SUBWF	ULTIMAALARMAD,W
+	BTFSC	STATUS,Z
+	RETURN
+	
+	MOVF	NALARMA,F		; Si no hay alarmas cercanas sigue con otro día
+	BTFSS	STATUS,Z
+	GOTO	COMPALARMAS2B
+	CALL	INCDIASEMANA
+	INCF	ULTIMAALARMAD,F		; Saber cuantas veces se ha incrementado el día
+	GOTO	COMPALARMAS1Y		; Continual con el día desde el principio
+
+COMPALARMAS2B	
+
+
+	MOVF	Hora,W
+	SUBWF	HORAALARMA,W		; HORAALARMA - Hora = HORADIF
+	MOVWF	HORADIF
+	BTFSC	STATUS,Z
+	GOTO	COMPALARMAS3
+	
+	MOVF	HORADIF,W		; HORADIF - 0xD0
+	SUBLW	0xD0
+	BTFSC	STATUS,C
+	RETURN				; HORADIF < 0xD0 No es la última hora del día
+	CALL	INCDIASEMANA		; HORADIF > 0xD0, es la última alarma del día, incrementa el día
+	INCF	ULTIMAALARMAD,F		; Saber cuantas veces se ha incrementado el día
+	GOTO	COMPALARMAS1Y		; Continual con el día desde el principio
+	
+
+
+COMPALARMAS3
+
+	MOVF	Minuto,W
+	SUBWF	MINUTOALARMA,W		; MINUTOALARMA - Minuto = MINUTODIF
+	MOVWF	MINUTODIF
+
+
+	MOVF	MINUTODIF,W		; MINUTODIF - 0xA0
+	SUBLW	0xA0
+	BTFSC	STATUS,C
+	RETURN				; MINUTODIF < 0xA0 es un minuto posterior al actual con hora igual
+	CALL	INCDIASEMANA		; MINUTODIF > 0xA0, es es un minuto anterior al actual con hora igual
+	BSF	ULTIMAALARMAD,0		; Activa la bandera de ultima alarma
+	GOTO	COMPALARMAS1Y		; Continual con el día desde el principio
+
+
+
+ANTESDELOGO
+	IF (ANTESDELOGO > 0xDFE)
+		ERROR	"Atención: Se interrumpe con el logo"
+		MESSG	"de la direccion 0xE00"
+	ENDIF
+; LOGO**** ****************************************************************************************************
+
+
+	ORG	0xE01
+
+LCD_DIBLOGORET
+	ADDWF	PCL,F
+	
+	RETLW	b'00000000'
+	RETLW	b'00000000'
+	RETLW	b'00000000'
+	RETLW	b'00000001'
+	RETLW	b'00000111'
+	RETLW	b'00011100'
+	RETLW	b'00011100'
+	RETLW	b'00001111'
+
+	RETLW	b'00000000'
+	RETLW	b'00000011'
+	RETLW	b'00001110'
+	RETLW	b'00011000'
+	RETLW	b'00000011'
+	RETLW	b'00000011'
+	RETLW	b'00000000'
+	RETLW	b'00011111'
+
+	RETLW	b'00011110'
+	RETLW	b'00011110'
+	RETLW	b'00000110'
+	RETLW	b'00000000'
+	RETLW	b'00011110'
+	RETLW	b'00011110'
+	RETLW	b'00000110'
+	RETLW	b'00011110'
+
+	RETLW	b'00001111'
+	RETLW	b'00001111'
+	RETLW	b'00001100'
+	RETLW	b'00001100'
+	RETLW	b'00001100'
+	RETLW	b'00001100'
+	RETLW	b'00001100'
+	RETLW	b'00001111'
+
+	RETLW	b'00000000'
+	RETLW	b'00011000'
+	RETLW	b'00001110'
+	RETLW	b'00000011'
+	RETLW	b'00000000'
+	RETLW	b'00000000'
+	RETLW	b'00000000'
+	RETLW	b'00011111'
+
+	RETLW	b'00000000'
+	RETLW	b'00000000'
+	RETLW	b'00000000'
+	RETLW	b'00010000'
+	RETLW	b'00011100'
+	RETLW	b'00000111'
+	RETLW	b'00000111'
+	RETLW	b'00011110'
+
+
+	END
+	
+;	===================================================================

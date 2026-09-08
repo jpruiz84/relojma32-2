@@ -1,0 +1,347 @@
+\documentclass[9pt,notitlepage,openany]{scrbook}
+\usepackage{anysize}
+\paperwidth = 13.95cm
+\paperheight = 21.6cm
+\marginsize{1.5cm}{1.5cm}{1.5cm}{1.5cm} %\marginsize{izq}{der}{sup}{inf }
+
+\usepackage{bera}		% Define el tipo de letra
+\usepackage{arev}
+
+%\oddsidemargin = 4cm
+%\evensidemargin = 2cm
+%\usepackage[left=6.8cm,top=6cm,right=0cm]{geometry} 
+%left 0=2.8,
+%\documentclass[bsc,draft,singlespacing]{csthesis}
+%\documentclass[bsc,doublespacing]{csthesis}
+      
+\usepackage[spanish]{babel}     % Idioma de Capítulos y demás
+\usepackage[latin1]{inputenc}
+\usepackage{fontenc}
+
+
+\usepackage{verbatim}
+\usepackage{moreverb}
+\let\verbatiminput=\verbatimtabinput
+\def\verbatimtabsize{8} 
+\usepackage{hyperref}
+
+
+
+\usepackage{mathcomp}
+\usepackage{latexsym}
+\usepackage{pifont}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{wasysym}
+\usepackage{colortbl}
+\usepackage{multicol} 
+\usepackage{booktabs}
+
+% Manejo de imagenes PDF y EPS
+\newif\ifpdf
+\ifx\pdfoutput\undefined
+\pdffalse % we are not running PDFLaTeX
+\else
+\pdfoutput=1 % we are running PDFLaTeX
+\pdftrue
+\fi
+
+\ifpdf
+\usepackage[pdftex]{graphicx}
+\else
+\usepackage{graphicx}
+\fi
+
+\ifpdf
+\DeclareGraphicsExtensions{.pdf, .jpg, .tif}
+\else
+\DeclareGraphicsExtensions{.eps, .jpg}
+\fi
+
+
+\setlength{\parindent}{0cm}
+\setlength{\parskip}{0.3cm}
+
+
+
+\begin{document}
+\pagestyle{empty}
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+\begin{center}
+                \includegraphics[width=11cm]{./figuras/tapam.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+\end{center}
+\end{figure}
+
+
+\tableofcontents 
+\pagestyle{plain}
+\chapter{Descripción General}
+
+El Reloj MA 32-2 en un dispositivo electrónico digital que cuenta con un reloj calendario y la posibilidad de programar 32 distintas alarmas con diferentes opciones de timbrado en dos diferentes tipos de horarios. Maneja un contacto de potencia capaz de soportar hasta 15A a 120VAC (1800W), una memoria interna tipo EEPROM donde se almacena la configuración de las alarmas la cual es almacena los datos hasta por 40 años sus datos, una pila interna CR2032 para no perder la hora en caso de fallas del fluido eléctrico y un menú en pantalla LCD facilita de gran forma el manejo.
+
+\textit{Ventajas:}
+
+La precisión en el timbre para el cambio de hora, es de gran importancia para toda la comunidad educativa, pero especialmente para el docente quien podrá programar sus actividades de clase con la plena seguridad de que el timbre de cambio de hora sonará con una precisión de segundos. 
+
+La labor diaria y constante del toque del timbre se olvidará por completo, ya que el Reloj MA 32-2 se programa por una sola vez y no requiere de ninguna otra operación, 
+
+\section{Características}
+
+\textit{Dos Horarios:} El Reloj MA 32-2 permite programar dos horarios distintos (horario normal y horario especial) fácilmente intercambiables, cada uno hasta con 32 alarmas
+
+\textit{Reconocimiento Del Día:} El Reloj MA 32-2 está dotado de un calendario perpetuo que reconoce los días de la semana por lo cual timbrará únicamente de lunes a viernes.  
+
+\textit{Fácil Manejo:} Su programación es muy sencilla y se realiza por una sola vez, esta no se borrará aunque se suspenda el fluido eléctrico.
+
+\textit{Pila de respaldo:} El Reloj MA 32-2 cuenta con una pila de respaldo la cual permite al sistema mantener la hora en caso de cortes en el fluido eléctrico. La pila usada, CR2032 tiene una duración de 10 años.
+
+\textit{Pantalla LCD:} Su pantalla LCD retro iluminada, facilita la programación y muestra constantemente la hora exacta y la hora del próximo timbre. 
+
+\textit{Teclado Numérico:} Su teclado numérico y de funciones permite una fácil programación de los timbrados y el cambio de horario.
+
+\textit{Adaptabilidad:} El Reloj MA 32-2 se instala y adapta fácilmente a cualquier sistema de timbre, chicharra o sistema de alarma.
+
+\textit{Seguridad:} El Reloj MA 32-2 posee un sistema de seguridad que solicita una clave o contraseña, para evitar que personas no autorizadas accedan o modifiquen la programación.
+
+\textit{Calidad:} El Reloj MA 32-2 está elaborado con materiales de altísima calidad lo que garantiza un funcionamiento preciso e ininterrumpido durante muchos años.
+
+
+\newpage
+
+\section{Vista frontal}
+
+En la parte frontal se encuentra una pantalla LCD y un teclado de números y funciones con los cuales se opera el Reloj MA 32-2.
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+        \caption[Vista frontal]{Vista frontal}
+        \begin{center}
+                \includegraphics[width=8cm]{./figuras/frente1.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+        \end{center}
+	\label{frente1}
+\end{figure}
+
+\newpage
+
+\section{Vista inferior}
+
+En la parte inferior se encuentra la entrada de corriente, el fusible de entrada que proteje al sistema de fallos en la alimentación eléctrica, el fusible de potencia que proteje el contacto interno y el conector de potencia donde se conecta el circuito de timbres.
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+        \caption[Vista inferior]{Vista inferior}
+        \begin{center}
+                \includegraphics[width=9cm]{./figuras/inferior1.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+        \end{center}
+	\label{inferior1}
+\end{figure}
+
+\newpage
+\section{Vista superior}
+
+En la parte superior se encuentra un pulsador auxiliar de timbrado el cual cierra el contacto de potencia para realizar un timbrado que no halla sido programado. El interruptor de timbrado automático impide que el sistema cierre el contacto de potencia con el fin de desactivar los timbres.
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+        \caption[Vista superior]{Vista superior}
+        \begin{center}
+                \includegraphics[width=8cm]{./figuras/superior1.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+        \end{center}
+	\label{superior1}
+\end{figure}
+
+
+\newpage
+\section{Pantalla principal}
+
+En la pantalla principal se muestra la hora actual en formato AM/PM, la fecha compuesta en su orden por el día del mes, el mes y los dos últimos dígitos del año, en la segunda linea se encuentra el día de la semana, seguido por las letras PT la hora del próximo timbrado y al final el número que indica que tipo de horario se esta usando. 
+
+\textit{Nota: Si no existe ninguna alarma programada en el tipo de horario especificado el espacio donde se encuentra la hora del próximo timbrado aparecerá en blanco}
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+        \caption[Pantalla principal]{Pantalla principal}
+        \begin{center}
+                \includegraphics[width=8cm]{./figuras/lcd1.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+        \end{center}
+	\label{lcd1}
+\end{figure}
+
+\newpage
+\section{Teclado de números y funciones}
+
+Este teclado esta compuesto por una sección numérica y una sección de funciones compuesta por letras. La tecla A se usa como Enter o Aceptar para acceder a un menú o validar un cambio. Las teclas B y C se usan como flechas arriba y abajo respectivamente para desplazarse entre el menú o diferentes opciones. La tecla D se usa para acceder o salir del Menú de configuración. Cada vez que se accede al menú la luz de fondo de la pantalla LCD se activa, al salir del menú, permanece activa esta luz por 10 segundos. El botón asterisco (*) o de luz de fondo activa la luz por 10 segundos para poder visualizar los mensajes de la pantalla principal.
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+        \caption[Teclado de números y funciones]{Teclado de números y funciones}
+        \begin{center}
+                \includegraphics[width=8cm]{./figuras/teclado1.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+        \end{center}
+	\label{teclado1}
+\end{figure}
+
+\newpage
+\section{Menú de configuración}
+
+Con la tecla D (Menú), se accede al menú de configuración en el cual el usuario puede desplazarse por las diferentes opciones con la ayuda de las teclas B y C, para acceder a la opción deseada se pulsa la tecla A (Enter). El menú esta compuesto de las siguientes opciones que se describen en los capítulos posteriores.
+\begin{itemize}
+\item Fijar Reloj
+\item Fijar Alarmas
+\item Tipo de Horario
+\item Contraseña
+\item Dura. Timbres
+\end{itemize}
+
+\section{Interruptor de timbrado automático}
+
+El interruptor de timbrado automático impide que el sistema cierre el contacto de potencia lo cual desactiva el timbrado automático programado, esto función ayuda a desactivar los timbres cuando el usuario lo desee por ejemplo en días feriados. El estado de encendido de este interruptor se distingue cuando este esta posicionado del lado del punto blanco.
+
+\textit{Nota: Se recomienda colocar el Interruptor de timbrado automático en apagado al momento de conectar a la corriente eléctrica el Reloj MA 32-2 para evitar timbrados no deseados}
+
+\chapter{Fijar Reloj}
+
+La opción Fijar Reloj permite ajustar la hora y la fecha actual, para ello se procede de la siguiente forma:
+\begin{itemize}
+\item Acceder al menú con el botón D (Menú)
+\item Desplazarse hasta la opción Fijar Reloj con los botones B y C y pulsar el botón A (Enter).
+\item Establecer la hora y los minutos con la ayuda de el teclado numérico
+\item Fijar AM o PM con la ayuda de las teclas B y C y luego pulsar el botón A (Enter)
+\item Fijar el día, el mes y los dos últimos dígitos del año  con el teclado numérico
+\item Fijar el día de la semana con las teclas B y C y pulsar finalmente el botón A (Enter)
+\end{itemize}
+
+Una vez pulsado el botón A (Enter) después de fijar el día de la semana la hora queda establecida y los segundos se reinician a cero. El Reloj MA 32-2 cuenta con una pila interna CR2032 la cual es capaz de almacenar la hora en caso de fallas de energía por hasta 10 años. Si al momento de el restablecimiento de la energía la hora no es la correcta es necesario cambiar esta pila.
+
+\chapter{Fijar Alarmas}
+
+La opción Fijar Alarmas permite ajustar las 32 alarmas del tipo de horario 1 y las 32 alarmas del tipo de horario 2. La Figura \ref{lcdfalarmas} muestra este menú que indica el numero de la alarma, el tipo de horario al que pertenece la hora a la que esta fijada esta alarma el tipo de timbrado y el estado de la alarma, apagada (OFF) o encendida (ON).
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+        \caption[Pantalla fijar alarmas]{Pantalla fijar alarmas}
+        \begin{center}
+                \includegraphics[width=8cm]{./figuras/lcdfalarmas.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+        \end{center}
+	\label{lcdfalarmas}
+\end{figure}
+
+
+Para desplazarse entre las alarmas se usan los botones B y C, para fijar una alarma se pulsa el botón A (Enter) estando en el numero de alarma que se desea modificar y se sigue este orden:
+\begin{itemize}
+\item Establecer la hora y los minutos de la alarma con la ayuda de el teclado numérico
+\item Fijar AM o PM con la ayuda de las teclas B y C y luego pulsar el botón A (Enter)
+\item Fijar el tipo de timbrado con las teclas B y C y luego pulsar el botón A (Enter)
+\item Fijar el estado de la alarma con las teclas B y C en encendida (ON) o apagada (OFF) y finalmente pulsar el botón A (Enter)
+\end{itemize}
+
+De esta misma forma se pueden fijar una o todas las alarmas, al desplazarse por las alarmas con los botones B y C y llegar a la alarma No 32 el conteo continua con la alarma No 1 del tipo de horario 2. Cada vez que se configura una alarma estos datos quedan guardados en la memoria EEPROM del sistema lo que evita pérdida de los datos en caso de fallo de la energía.
+
+\textit{Nota: No es necesario colocar las alarmas en orden}
+
+\section{Tipo de timbrado}
+
+El Reloj MA 32-2 soporta 4 diferentes modos de timbrado que son los siguientes:
+
+\begin{itemize}
+\item 1TC: 1 Timbre corto
+\item 1TL: 1 Timbre largo
+\item 2TC: 2 Timbres cortos
+\item 3TC: 3 Timbres cortos
+\end{itemize}
+
+La duración de los intervalos de tiempo de los timbres se establecen con el menú Dura. Timbres que se explica a continuación.
+
+\section{Dura. Timbres}
+
+En el menú Dura. Timbres se establece la duración del timbre corto y del timbre largo, para ello se procede de la siguiente forma:
+
+\begin{itemize}
+\item Acceder al menú con el botón D (Menú)
+\item Desplazarse hasta la opción Dura. Timbres con los botones B y C y pulsar el botón A (Enter).
+\item Establecer con los botones B y C la duración en segundos del timbre corto (TC) y pulsar el botón A (Enter).
+\item Establecer con los botones B y C la duración en segundos del timbre largo (TL) y pulsar finalmente el botón A (Enter).
+\end{itemize}
+
+\section{Tipo de horario}
+
+El menú tipo de horario permite fijar el tipo de horario que se desea maneje el Reloj MA 32-2, para cambiar este parametro se procede de la siguiente forma:
+
+\begin{itemize}
+\item Acceder al menú con el botón D (Menú)
+\item Desplazarse hasta la opción Tipo de Horario con los botones B y C y pulsar el botón A (Enter).
+\item Cambiar el Tipo de Horario entre H1 y H2 con las teclas B y C y finalmente pulsar el botón A (Enter).
+\end{itemize}
+
+Se manejan dos tipos de horarios ya que en ocasiones existen días en los cuales es necesario recortar o aumentar tiempo a las horas en que se activan los timbres.
+
+\chapter{Contraseña}
+
+El Reloj MA 32-2 tiene la opción de protejer su configuración mediante una contraseña de 4 numeros, para protejer el sistema con una contraseña se procede de la siguiente forma:
+
+\begin{itemize}
+\item Acceder al menú con el botón D (Menú)
+\item Desplazarse hasta la opción Contraseña con los botones B y C y pulsar el botón A (Enter)
+\item Escoger si el sistema pide o no pide la contraseña con los botones B y C y pulsar el botón A (Enter)
+\item Escribir los cuatro numeros de la contraseña
+\item Escribir nuevamente los cuatro numeros de la contraseña
+\end{itemize}
+
+Una vez establecida la contraseña el Reloj MA 32-2 la pedirá cada vez que se acceda al menú, en donde existe un tiempo limite de 5 segundos para poderla escribir. Si se desea desactivar la contraseña se escoge NO a la pregunta pedir contraseña en este menú.
+
+
+\chapter{Conexión de los timbres}
+
+El Reloj MA 32-2 posee un conector de potencia el cual cierra el circuito cuando un timbrado es activado por una alarma o cuando se oprime el pulsador auxiliar. Este contacto soporta una corriente máxima de 15A a 120VAC (1800W) la cual esta protejida internamente por un fusible de 15A.
+
+Los timbres se deben conectar en paralelo con una rama al Neutro (N) de la instalación eléctrica y la otra rama al conector de potencia del Reloj MA 32-2, el otro contacto del conector de potencia debe ser conectado a la Linea (L) de la instalación eléctrica. Es muy importante que la instalación eléctrica soporte la corriente requerida por los timbres. El esquema de la Figura \ref{conpotencia} muestra de forma mas detallada la conexión.
+
+\begin{figure}[ht] % Se usa la [h] para que la imagen empiece forzada en el lugar donde inicia \begin{figure}
+
+        \caption[Esquema de conexión de timbres]{Esquema de conexión de timbres}
+        \begin{center}
+                \includegraphics[width=8cm]{./figuras/conpotencia.png} % include ./img/imagen.[pdf|png|jgp] si es pdflatex o ./img/imagen.eps si es latex
+        \end{center}
+	\label{conpotencia}
+\end{figure}
+
+Es muy importante calcular y medir la corriente que demanda la instalación de timbres que se tenga antes de conectar el Reloj MA 32-2, si la corriente demandada supera las características del Reloj MA 32-2 contacte a Galeras Digital para dar solución a sus nuevos requerimientos.
+
+\textit{Nota: Galeras Digital no se hace responsable por daños causados debido a una instalación inadecuada o por fallas presentadas del fluido eléctrico}
+
+\chapter{Garantía}
+
+Este producto esta garantizado por Galeras Digital al comprador original de estar libre de defectos en los materiales y fabricación bajo uso normal por un periodo de un año de la fecha de compra. Durante el periodo de garantía y con el contrato de compra; el producto será reparado utilizando piezas de remplazo originales y si es el caso el producto será remplazado en su totalidad. Para obtener el servicio de garantía usted debe contactar a Galeras Digital y poseer una copia de su contrato de compra que muestre la fecha de tal compra, usted no tendrá cargo por las piezas o la reparación.
+
+El cliente NO tendrá reclamo alguno bajo esta garantía para gastos de reparaciones o ajustes si:
+
+\begin{enumerate}
+\item El problema es causado por un trato incorrecto, maltrato o descuido
+\item Los sellos de garantía muestran señas de violación.
+\item El problema es causado por un incendio u otra desgracia natural
+\item El problema es causado por la reparación o ajuste inadecuado realizado por personas que no pertenecen a Galeras Digital
+\item El contrato de compra no se presenta cuando se solicita el servicio.
+\item El periodo de garantía ha expirado
+\end{enumerate}
+
+\newpage
+
+\section{Contactos}
+
+Para contactar a Galeras Digital puede comunicarse a los siguientes teléfonos o correo electrónico:
+\
+\newline
+\newline
+Teléfono: 2-7223078 (Pasto - Colombia)
+\
+\newline
+Celular: 3006545980 (Colombia)
+\
+\newline
+\newline
+Correo electrónico: galerasdigital@gmail.com
+
+\end{document}
+

@@ -1,0 +1,542 @@
+MPLINK 4.40, Linker
+Linker Map File - Created Sun Sep 28 11:00:38 2014
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000000
+                   .org_1       code   0x000000    program   0x000002
+                   .org_2       code   0x000004    program   0x000f7c
+                   .org_3       code   0x000900    program   0x000504
+                   .org_4       code   0x000e01    program   0x000062
+   .config_2007_RELOJMA.O       code   0x002007    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000000      
+                            0x000004    0x0007c1      
+                            0x000900    0x000b81      
+                            0x000e01    0x000e31      
+                            0x002007    0x002007      
+            2675 out of 8454 program addresses used, program memory utilization is 31%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                  ACTMENU   0x0004ad    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            ACTTIPOTIMBRE   0x00037d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              ANTESDELOGO   0x000b82    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                   ARELOJ   0x000139    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ARELOJ2   0x00018a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ARELOJ3   0x0001b5    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  BINAD99   0x000900    program     static Librerias\BINAD99.INC    
+                 BINAD991   0x000902    program     static Librerias\BINAD99.INC    
+                 BINAD992   0x000906    program     static Librerias\BINAD99.INC    
+                 BINAD99E   0x00090c    program     static Librerias\BINAD99.INC    
+                 BINAD99F   0x00090f    program     static Librerias\BINAD99.INC    
+                 BINADECC   0x000918    program     static Librerias\BINAD99.INC    
+                 BINAUNIC   0x000914    program     static Librerias\BINAD99.INC    
+              COMPALARMAS   0x000ab4    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             COMPALARMAS1   0x000aed    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1A   0x000b19    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1B   0x000b20    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1C   0x000b2a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1Y   0x000acd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1Z   0x000ae0    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS1ZA   0x000ae3    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS1ZB   0x000ae7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          COMPALARMAS1ZBB   0x000aea    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             COMPALARMAS2   0x000b2e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS2A   0x000b3e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS2AA   0x000b3e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS2AB   0x000b42    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          COMPALARMAS2ABB   0x000b45    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          COMPALARMAS2ACC   0x000b48    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS2B   0x000b6c    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             COMPALARMAS3   0x000b78    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMASDZ   0x000ab9    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               DECCONTDIA   0x000a69    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                DECDIASEM   0x000236    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               DECNALARMA   0x000366    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 DECNMENU   0x000393    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            DECTIPOTIMBRE   0x000375    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DECVTIPOHORARIO   0x000a9f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        DECVTIPOHORARIOFA   0x00025d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            DEFCONTRASENA   0x00091e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           DEFCONTRASENA2   0x000931    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           DEFCONTRASENA3   0x000956    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DEFCONTRASENAER   0x0009bf    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           DEFDURATIMBRES   0x0009d0    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DEFDURATIMBRES1   0x0009e4    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DEFDURATIMBRES2   0x000a0b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+      DS1307_CargaInicial   0x000778    program     static Librerias\DS1307.INC     
+           DS1307_Escribe   0x000782    program     static Librerias\DS1307.INC     
+        DS1307_Inicializa   0x000752    program     static Librerias\DS1307.INC     
+               DS1307_Lee   0x00075b    program     static Librerias\DS1307.INC     
+                    EEDIR   0x000797    program     static Librerias\EEPROM.INC     
+               EEESCRIBIR   0x0007a8    program     static Librerias\EEPROM.INC     
+              EEESCRIBIR2   0x0007b9    program     static Librerias\EEPROM.INC     
+                   EELEER   0x00079d    program     static Librerias\EEPROM.INC     
+                  EELEER1   0x0007a1    program     static Librerias\EEPROM.INC     
+                ENTERMENU   0x000116    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             FIJARALARMAS   0x00023f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            FIJARALARMAS1   0x000265    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARALARMAS1A   0x000268    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARALARMAS1B   0x00027b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARALARMAS1BB   0x00027e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARALARMAS1C   0x000281    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            FIJARALARMASH   0x000241    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FIJARDIASEM   0x000214    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               FIJARRELOJ   0x0001b8    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FIJARRELOJ1   0x0001de    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARRELOJFECHA   0x00020e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FIJARRELOJN   0x000200    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         FIJARTHORARIODIA   0x000a6f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARUNAALARMA   0x0002d6    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARUNAALARMA1   0x00030b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         FIJARUNAALARMA1A   0x0002ee    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARUNAALARMA2   0x00031d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        FIJARUNAALARMAFIN   0x00034b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARUNAALARMAN   0x00033d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FININTERRUPCION   0x00009f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FINITECLADO   0x000131    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               FINPAGINA0   0x0007c2    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             I2C_EnviaBit   0x00072c    program     static Librerias\BUS_I2C.INC    
+            I2C_EnviaByte   0x000729    program     static Librerias\BUS_I2C.INC    
+            I2C_EnviaCero   0x00072f    program     static Librerias\BUS_I2C.INC    
+           I2C_EnviaStart   0x00071b    program     static Librerias\BUS_I2C.INC    
+            I2C_EnviaStop   0x000723    program     static Librerias\BUS_I2C.INC    
+             I2C_EnviaUno   0x000731    program     static Librerias\BUS_I2C.INC    
+            I2C_FlancoSCL   0x000732    program     static Librerias\BUS_I2C.INC    
+               I2C_LeeBit   0x000741    program     static Librerias\BUS_I2C.INC    
+              I2C_LeeByte   0x00073e    program     static Librerias\BUS_I2C.INC    
+               INCCONTDIA   0x000a60    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              INCCONTDIA1   0x000a66    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                INCDIASEM   0x000230    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             INCDIASEMANA   0x000aa7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            INCDIASEMANA1   0x000aaf    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               INCNALARMA   0x000360    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 INCNMENU   0x00038d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            INCTIPOTIMBRE   0x00036f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          INCVTIPOHORARIO   0x000a99    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        INCVTIPOHORARIOFA   0x000257    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                   INICIO   0x00006a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  INICIO2   0x000087    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             INTERRPUCION   0x000096    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 ITECLADO   0x0000a6    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                ITECLADO1   0x0000e9    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                ITECLADO2   0x000102    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                ITECLADOA   0x0000bd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+      LCD_2Lineas4Bits5x7   0x0005fb    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_Borra   0x0006a7    program     static Librerias\LCD_4BITOPD877.INC
+                 LCD_Byte   0x000637    program     static Librerias\LCD_4BITOPD877.INC
+         LCD_ByteCompleto   0x00063f    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_Caracter   0x000606    program     static Librerias\LCD_4BITOPD877.INC
+          LCD_CodigoCGROM   0x000614    program     static Librerias\LCD_4BITOPD877.INC
+           LCD_CursorIncr   0x0005eb    program     static Librerias\LCD_4BITOPD877.INC
+            LCD_CursorOFF   0x0005f9    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_CursorON   0x0005f7    program     static Librerias\LCD_4BITOPD877.INC
+              LCD_DIBLOGO   0x000672    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_DIBLOGO1   0x000679    program     static Librerias\LCD_4BITOPD877.INC
+           LCD_DIBLOGORET   0x000e01    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+   LCD_DosEspaciosBlancos   0x00062e    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_EnheMayuscula   0x00061b    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_EnheMinuscula   0x000615    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_Envia   0x00060b    program     static Librerias\LCD_4BITOPD877.INC
+         LCD_EnviaBlancos   0x000631    program     static Librerias\LCD_4BITOPD877.INC
+       LCD_EnviaByteLetra   0x00064d    program     static Librerias\LCD_4BITOPD877.INC
+         LCD_EnviaComando   0x000601    program     static Librerias\LCD_4BITOPD877.INC
+            LCD_EnviaDato   0x0005fc    program     static Librerias\LCD_4BITOPD877.INC
+      LCD_EnviaOtroBlanco   0x000632    program     static Librerias\LCD_4BITOPD877.INC
+           LCD_EscribeLCD   0x0005e1    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_EspBF   0x000650    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_EspBF2   0x00065d    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_FinCGROM   0x000628    program     static Librerias\LCD_4BITOPD877.INC
+   LCD_FinVisualizaDigito   0x00064f    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_Grado   0x000622    program     static Librerias\LCD_4BITOPD877.INC
+           LCD_Inicializa   0x0005ac    program     static Librerias\LCD_4BITOPD877.INC
+                 LCD_Leer   0x00068b    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_Linea1   0x0005ed    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_Linea2   0x0005ef    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_LineaEnBlanco   0x00062a    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_Nibble   0x000644    program     static Librerias\LCD_4BITOPD877.INC
+                  LCD_OFF   0x0005f5    program     static Librerias\LCD_4BITOPD877.INC
+       LCD_PosicionLinea1   0x0005f1    program     static Librerias\LCD_4BITOPD877.INC
+       LCD_PosicionLinea2   0x0005f3    program     static Librerias\LCD_4BITOPD877.INC
+  LCD_TresEspaciosBlancos   0x000630    program     static Librerias\LCD_4BITOPD877.INC
+      LCD_UnEspacioBlanco   0x00062c    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_VisualizaAlto   0x000641    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_VisualizaBajo   0x000643    program     static Librerias\LCD_4BITOPD877.INC
+                 MALARMAN   0x00042a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              MCONTRASENA   0x0003c2    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MDOMINGO   0x0004ec    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             MDURATIMBRES   0x00039b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            MENCONTRASENA   0x0004a8    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                   MENDIA   0x0004f3    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE1TC   0x0003ef    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE1TL   0x0003f6    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE2TC   0x0003fd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE3TC   0x000404    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           MENSAJEHORARIO   0x000419    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJEOFF   0x00040b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                MENSAJEON   0x000412    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                MFALARMAS   0x000468    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MFRELOJ   0x00044e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MJUEVES   0x0004d7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                   MLUNES   0x0004c2    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MMARTES   0x0004c9    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MMIERCOLES   0x0004d0    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                      MNO   0x0003bd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MRINGOFF   0x0003ea    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MRINGON   0x0003d7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MSABADO   0x0004e5    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                      MSI   0x0003b8    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                MTHORARIO   0x000486    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MVERSION   0x00043f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MVIERNES   0x0004de    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                PRINCIPAL   0x000094    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+    R1Decima_BucleExterno   0x0006f5    program     static Librerias\RETARDOS.INC   
+   R1Decima_BucleExterno2   0x0006f3    program     static Librerias\RETARDOS.INC   
+    R1Decima_BucleInterno   0x0006f7    program     static Librerias\RETARDOS.INC   
+        R1ms_BucleExterno   0x0006de    program     static Librerias\RETARDOS.INC   
+        R1ms_BucleInterno   0x0006e0    program     static Librerias\RETARDOS.INC   
+               RESTDIASEM   0x00023c    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              RESTNALARMA   0x00036c    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        RESVTIPOHORARIOFA   0x000262    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ROTAR6D   0x000511    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 ROTAR6D1   0x000514    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ROTAR6I   0x00051a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 ROTAR6I1   0x00051d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            RetardoMicros   0x0006ca    program     static Librerias\RETARDOS.INC   
+        Retardo_100micros   0x0006c4    program     static Librerias\RETARDOS.INC   
+            Retardo_100ms   0x0006d0    program     static Librerias\RETARDOS.INC   
+         Retardo_10micros   0x0006b7    program     static Librerias\RETARDOS.INC   
+             Retardo_10ms   0x0006d6    program     static Librerias\RETARDOS.INC   
+              Retardo_10s   0x0006e8    program     static Librerias\RETARDOS.INC   
+          Retardo_1Decima   0x0006f1    program     static Librerias\RETARDOS.INC   
+              Retardo_1ms   0x0006dc    program     static Librerias\RETARDOS.INC   
+               Retardo_1s   0x0006ee    program     static Librerias\RETARDOS.INC   
+        Retardo_200micros   0x0006c1    program     static Librerias\RETARDOS.INC   
+            Retardo_200ms   0x0006ce    program     static Librerias\RETARDOS.INC   
+         Retardo_20micros   0x0006c9    program     static Librerias\RETARDOS.INC   
+             Retardo_20ms   0x0006d4    program     static Librerias\RETARDOS.INC   
+              Retardo_20s   0x0006e6    program     static Librerias\RETARDOS.INC   
+              Retardo_2ms   0x0006da    program     static Librerias\RETARDOS.INC   
+               Retardo_2s   0x0006ec    program     static Librerias\RETARDOS.INC   
+          Retardo_4micros   0x0006bd    program     static Librerias\RETARDOS.INC   
+        Retardo_500micros   0x0006be    program     static Librerias\RETARDOS.INC   
+            Retardo_500ms   0x0006f0    program     static Librerias\RETARDOS.INC   
+         Retardo_50micros   0x0006c6    program     static Librerias\RETARDOS.INC   
+             Retardo_50ms   0x0006d2    program     static Librerias\RETARDOS.INC   
+          Retardo_5micros   0x0006bc    program     static Librerias\RETARDOS.INC   
+              Retardo_5ms   0x0006d8    program     static Librerias\RETARDOS.INC   
+               Retardo_5s   0x0006ea    program     static Librerias\RETARDOS.INC   
+             Retardo_wseg   0x0006ff    program     static Librerias\RETARDOS.INC   
+            Retardo_wseg1   0x000702    program     static Librerias\RETARDOS.INC   
+              Retardos_ms   0x0006dd    program     static Librerias\RETARDOS.INC   
+            Rmicros_Bucle   0x0006cb    program     static Librerias\RETARDOS.INC   
+       SCL_AltaImpedancia   0x000715    program     static Librerias\BUS_I2C.INC    
+                 SCL_Bajo   0x000710    program     static Librerias\BUS_I2C.INC    
+      SCL_EsperaNivelAlto   0x000718    program     static Librerias\BUS_I2C.INC    
+       SDA_AltaImpedancia   0x00070c    program     static Librerias\BUS_I2C.INC    
+                 SDA_Bajo   0x000707    program     static Librerias\BUS_I2C.INC    
+            TESTEARALARMA   0x000523    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          TESTEARALARMA1B   0x00053f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         TESTEARALARMA1BB   0x000542    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          TESTEARALARMA1C   0x000545    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         TESTEARALARMAFIN   0x00055d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          TESTEARALARMANO   0x000567    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR1TC   0x000569    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR1TL   0x000570    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR2TC   0x000577    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR3TC   0x000585    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              TIPOHORARIO   0x000a37    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             TIPOHORARIO1   0x000a39    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         Tecl_ChequeaFila   0x000038    program     static Librerias\TECLADO.INC    
+            Tecl_Columna1   0x00003d    program     static Librerias\TECLADO.INC    
+            Tecl_Columna2   0x000040    program     static Librerias\TECLADO.INC    
+            Tecl_Columna3   0x000043    program     static Librerias\TECLADO.INC    
+            Tecl_Columna4   0x000046    program     static Librerias\TECLADO.INC    
+ Tecl_ConvierteOrdenEnHex   0x00000b    program     static Librerias\TECLADO.INC    
+           Tecl_FinLeeHex   0x00000a    program     static Librerias\TECLADO.INC    
+       Tecl_FinTecladoLee   0x000054    program     static Librerias\TECLADO.INC    
+         Tecl_GuardaValor   0x000052    program     static Librerias\TECLADO.INC    
+           Tecl_NoPulsada   0x000050    program     static Librerias\TECLADO.INC    
+     Tecl_TerminaColumnas   0x000049    program     static Librerias\TECLADO.INC    
+ Teclado_EsperaDejePulsar   0x000027    program     static Librerias\TECLADO.INC    
+      Teclado_FinTablaHex   0x00001c    program     static Librerias\TECLADO.INC    
+       Teclado_Inicializa   0x00001c    program     static Librerias\TECLADO.INC    
+           Teclado_LeeHex   0x000005    program     static Librerias\TECLADO.INC    
+          Teclado_LeeHexw   0x000055    program     static Librerias\TECLADO.INC    
+         Teclado_LeeHexww   0x00059a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        Teclado_LeeHexww1   0x00059d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        Teclado_LeeHexwwe   0x0005aa    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+    Teclado_LeeOrdenTecla   0x000035    program     static Librerias\TECLADO.INC    
+           Teclado_Leemax   0x00005d    program     static Librerias\TECLADO.INC    
+          Teclado_Leemaxa   0x00005f    program     static Librerias\TECLADO.INC    
+   Teclado_SigueEsperando   0x00002d    program     static Librerias\TECLADO.INC    
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+           Teclado_LeeHex   0x000005    program     static Librerias\TECLADO.INC    
+           Tecl_FinLeeHex   0x00000a    program     static Librerias\TECLADO.INC    
+ Tecl_ConvierteOrdenEnHex   0x00000b    program     static Librerias\TECLADO.INC    
+       Teclado_Inicializa   0x00001c    program     static Librerias\TECLADO.INC    
+      Teclado_FinTablaHex   0x00001c    program     static Librerias\TECLADO.INC    
+ Teclado_EsperaDejePulsar   0x000027    program     static Librerias\TECLADO.INC    
+   Teclado_SigueEsperando   0x00002d    program     static Librerias\TECLADO.INC    
+    Teclado_LeeOrdenTecla   0x000035    program     static Librerias\TECLADO.INC    
+         Tecl_ChequeaFila   0x000038    program     static Librerias\TECLADO.INC    
+            Tecl_Columna1   0x00003d    program     static Librerias\TECLADO.INC    
+            Tecl_Columna2   0x000040    program     static Librerias\TECLADO.INC    
+            Tecl_Columna3   0x000043    program     static Librerias\TECLADO.INC    
+            Tecl_Columna4   0x000046    program     static Librerias\TECLADO.INC    
+     Tecl_TerminaColumnas   0x000049    program     static Librerias\TECLADO.INC    
+           Tecl_NoPulsada   0x000050    program     static Librerias\TECLADO.INC    
+         Tecl_GuardaValor   0x000052    program     static Librerias\TECLADO.INC    
+       Tecl_FinTecladoLee   0x000054    program     static Librerias\TECLADO.INC    
+          Teclado_LeeHexw   0x000055    program     static Librerias\TECLADO.INC    
+           Teclado_Leemax   0x00005d    program     static Librerias\TECLADO.INC    
+          Teclado_Leemaxa   0x00005f    program     static Librerias\TECLADO.INC    
+                   INICIO   0x00006a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  INICIO2   0x000087    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                PRINCIPAL   0x000094    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             INTERRPUCION   0x000096    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FININTERRUPCION   0x00009f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 ITECLADO   0x0000a6    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                ITECLADOA   0x0000bd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                ITECLADO1   0x0000e9    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                ITECLADO2   0x000102    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                ENTERMENU   0x000116    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FINITECLADO   0x000131    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                   ARELOJ   0x000139    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ARELOJ2   0x00018a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ARELOJ3   0x0001b5    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               FIJARRELOJ   0x0001b8    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FIJARRELOJ1   0x0001de    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FIJARRELOJN   0x000200    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARRELOJFECHA   0x00020e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              FIJARDIASEM   0x000214    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                INCDIASEM   0x000230    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                DECDIASEM   0x000236    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               RESTDIASEM   0x00023c    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             FIJARALARMAS   0x00023f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            FIJARALARMASH   0x000241    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        INCVTIPOHORARIOFA   0x000257    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        DECVTIPOHORARIOFA   0x00025d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        RESVTIPOHORARIOFA   0x000262    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            FIJARALARMAS1   0x000265    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARALARMAS1A   0x000268    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARALARMAS1B   0x00027b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARALARMAS1BB   0x00027e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARALARMAS1C   0x000281    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           FIJARUNAALARMA   0x0002d6    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         FIJARUNAALARMA1A   0x0002ee    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARUNAALARMA1   0x00030b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARUNAALARMA2   0x00031d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          FIJARUNAALARMAN   0x00033d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        FIJARUNAALARMAFIN   0x00034b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               INCNALARMA   0x000360    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               DECNALARMA   0x000366    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              RESTNALARMA   0x00036c    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            INCTIPOTIMBRE   0x00036f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            DECTIPOTIMBRE   0x000375    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            ACTTIPOTIMBRE   0x00037d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 INCNMENU   0x00038d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 DECNMENU   0x000393    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             MDURATIMBRES   0x00039b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                      MSI   0x0003b8    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                      MNO   0x0003bd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              MCONTRASENA   0x0003c2    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MRINGON   0x0003d7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MRINGOFF   0x0003ea    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE1TC   0x0003ef    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE1TL   0x0003f6    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE2TC   0x0003fd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJE3TC   0x000404    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MENSAJEOFF   0x00040b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                MENSAJEON   0x000412    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           MENSAJEHORARIO   0x000419    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MALARMAN   0x00042a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MVERSION   0x00043f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MFRELOJ   0x00044e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                MFALARMAS   0x000468    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                MTHORARIO   0x000486    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            MENCONTRASENA   0x0004a8    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ACTMENU   0x0004ad    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                   MLUNES   0x0004c2    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MMARTES   0x0004c9    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               MMIERCOLES   0x0004d0    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MJUEVES   0x0004d7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MVIERNES   0x0004de    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  MSABADO   0x0004e5    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 MDOMINGO   0x0004ec    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                   MENDIA   0x0004f3    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ROTAR6D   0x000511    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 ROTAR6D1   0x000514    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  ROTAR6I   0x00051a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                 ROTAR6I1   0x00051d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            TESTEARALARMA   0x000523    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          TESTEARALARMA1B   0x00053f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         TESTEARALARMA1BB   0x000542    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          TESTEARALARMA1C   0x000545    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         TESTEARALARMAFIN   0x00055d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          TESTEARALARMANO   0x000567    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR1TC   0x000569    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR1TL   0x000570    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR2TC   0x000577    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               TIMBRAR3TC   0x000585    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         Teclado_LeeHexww   0x00059a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        Teclado_LeeHexww1   0x00059d    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+        Teclado_LeeHexwwe   0x0005aa    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           LCD_Inicializa   0x0005ac    program     static Librerias\LCD_4BITOPD877.INC
+           LCD_EscribeLCD   0x0005e1    program     static Librerias\LCD_4BITOPD877.INC
+           LCD_CursorIncr   0x0005eb    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_Linea1   0x0005ed    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_Linea2   0x0005ef    program     static Librerias\LCD_4BITOPD877.INC
+       LCD_PosicionLinea1   0x0005f1    program     static Librerias\LCD_4BITOPD877.INC
+       LCD_PosicionLinea2   0x0005f3    program     static Librerias\LCD_4BITOPD877.INC
+                  LCD_OFF   0x0005f5    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_CursorON   0x0005f7    program     static Librerias\LCD_4BITOPD877.INC
+            LCD_CursorOFF   0x0005f9    program     static Librerias\LCD_4BITOPD877.INC
+      LCD_2Lineas4Bits5x7   0x0005fb    program     static Librerias\LCD_4BITOPD877.INC
+            LCD_EnviaDato   0x0005fc    program     static Librerias\LCD_4BITOPD877.INC
+         LCD_EnviaComando   0x000601    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_Caracter   0x000606    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_Envia   0x00060b    program     static Librerias\LCD_4BITOPD877.INC
+          LCD_CodigoCGROM   0x000614    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_EnheMinuscula   0x000615    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_EnheMayuscula   0x00061b    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_Grado   0x000622    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_FinCGROM   0x000628    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_LineaEnBlanco   0x00062a    program     static Librerias\LCD_4BITOPD877.INC
+      LCD_UnEspacioBlanco   0x00062c    program     static Librerias\LCD_4BITOPD877.INC
+   LCD_DosEspaciosBlancos   0x00062e    program     static Librerias\LCD_4BITOPD877.INC
+  LCD_TresEspaciosBlancos   0x000630    program     static Librerias\LCD_4BITOPD877.INC
+         LCD_EnviaBlancos   0x000631    program     static Librerias\LCD_4BITOPD877.INC
+      LCD_EnviaOtroBlanco   0x000632    program     static Librerias\LCD_4BITOPD877.INC
+                 LCD_Byte   0x000637    program     static Librerias\LCD_4BITOPD877.INC
+         LCD_ByteCompleto   0x00063f    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_VisualizaAlto   0x000641    program     static Librerias\LCD_4BITOPD877.INC
+        LCD_VisualizaBajo   0x000643    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_Nibble   0x000644    program     static Librerias\LCD_4BITOPD877.INC
+       LCD_EnviaByteLetra   0x00064d    program     static Librerias\LCD_4BITOPD877.INC
+   LCD_FinVisualizaDigito   0x00064f    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_EspBF   0x000650    program     static Librerias\LCD_4BITOPD877.INC
+               LCD_EspBF2   0x00065d    program     static Librerias\LCD_4BITOPD877.INC
+              LCD_DIBLOGO   0x000672    program     static Librerias\LCD_4BITOPD877.INC
+             LCD_DIBLOGO1   0x000679    program     static Librerias\LCD_4BITOPD877.INC
+                 LCD_Leer   0x00068b    program     static Librerias\LCD_4BITOPD877.INC
+                LCD_Borra   0x0006a7    program     static Librerias\LCD_4BITOPD877.INC
+         Retardo_10micros   0x0006b7    program     static Librerias\RETARDOS.INC   
+          Retardo_5micros   0x0006bc    program     static Librerias\RETARDOS.INC   
+          Retardo_4micros   0x0006bd    program     static Librerias\RETARDOS.INC   
+        Retardo_500micros   0x0006be    program     static Librerias\RETARDOS.INC   
+        Retardo_200micros   0x0006c1    program     static Librerias\RETARDOS.INC   
+        Retardo_100micros   0x0006c4    program     static Librerias\RETARDOS.INC   
+         Retardo_50micros   0x0006c6    program     static Librerias\RETARDOS.INC   
+         Retardo_20micros   0x0006c9    program     static Librerias\RETARDOS.INC   
+            RetardoMicros   0x0006ca    program     static Librerias\RETARDOS.INC   
+            Rmicros_Bucle   0x0006cb    program     static Librerias\RETARDOS.INC   
+            Retardo_200ms   0x0006ce    program     static Librerias\RETARDOS.INC   
+            Retardo_100ms   0x0006d0    program     static Librerias\RETARDOS.INC   
+             Retardo_50ms   0x0006d2    program     static Librerias\RETARDOS.INC   
+             Retardo_20ms   0x0006d4    program     static Librerias\RETARDOS.INC   
+             Retardo_10ms   0x0006d6    program     static Librerias\RETARDOS.INC   
+              Retardo_5ms   0x0006d8    program     static Librerias\RETARDOS.INC   
+              Retardo_2ms   0x0006da    program     static Librerias\RETARDOS.INC   
+              Retardo_1ms   0x0006dc    program     static Librerias\RETARDOS.INC   
+              Retardos_ms   0x0006dd    program     static Librerias\RETARDOS.INC   
+        R1ms_BucleExterno   0x0006de    program     static Librerias\RETARDOS.INC   
+        R1ms_BucleInterno   0x0006e0    program     static Librerias\RETARDOS.INC   
+              Retardo_20s   0x0006e6    program     static Librerias\RETARDOS.INC   
+              Retardo_10s   0x0006e8    program     static Librerias\RETARDOS.INC   
+               Retardo_5s   0x0006ea    program     static Librerias\RETARDOS.INC   
+               Retardo_2s   0x0006ec    program     static Librerias\RETARDOS.INC   
+               Retardo_1s   0x0006ee    program     static Librerias\RETARDOS.INC   
+            Retardo_500ms   0x0006f0    program     static Librerias\RETARDOS.INC   
+          Retardo_1Decima   0x0006f1    program     static Librerias\RETARDOS.INC   
+   R1Decima_BucleExterno2   0x0006f3    program     static Librerias\RETARDOS.INC   
+    R1Decima_BucleExterno   0x0006f5    program     static Librerias\RETARDOS.INC   
+    R1Decima_BucleInterno   0x0006f7    program     static Librerias\RETARDOS.INC   
+             Retardo_wseg   0x0006ff    program     static Librerias\RETARDOS.INC   
+            Retardo_wseg1   0x000702    program     static Librerias\RETARDOS.INC   
+                 SDA_Bajo   0x000707    program     static Librerias\BUS_I2C.INC    
+       SDA_AltaImpedancia   0x00070c    program     static Librerias\BUS_I2C.INC    
+                 SCL_Bajo   0x000710    program     static Librerias\BUS_I2C.INC    
+       SCL_AltaImpedancia   0x000715    program     static Librerias\BUS_I2C.INC    
+      SCL_EsperaNivelAlto   0x000718    program     static Librerias\BUS_I2C.INC    
+           I2C_EnviaStart   0x00071b    program     static Librerias\BUS_I2C.INC    
+            I2C_EnviaStop   0x000723    program     static Librerias\BUS_I2C.INC    
+            I2C_EnviaByte   0x000729    program     static Librerias\BUS_I2C.INC    
+             I2C_EnviaBit   0x00072c    program     static Librerias\BUS_I2C.INC    
+            I2C_EnviaCero   0x00072f    program     static Librerias\BUS_I2C.INC    
+             I2C_EnviaUno   0x000731    program     static Librerias\BUS_I2C.INC    
+            I2C_FlancoSCL   0x000732    program     static Librerias\BUS_I2C.INC    
+              I2C_LeeByte   0x00073e    program     static Librerias\BUS_I2C.INC    
+               I2C_LeeBit   0x000741    program     static Librerias\BUS_I2C.INC    
+        DS1307_Inicializa   0x000752    program     static Librerias\DS1307.INC     
+               DS1307_Lee   0x00075b    program     static Librerias\DS1307.INC     
+      DS1307_CargaInicial   0x000778    program     static Librerias\DS1307.INC     
+           DS1307_Escribe   0x000782    program     static Librerias\DS1307.INC     
+                    EEDIR   0x000797    program     static Librerias\EEPROM.INC     
+                   EELEER   0x00079d    program     static Librerias\EEPROM.INC     
+                  EELEER1   0x0007a1    program     static Librerias\EEPROM.INC     
+               EEESCRIBIR   0x0007a8    program     static Librerias\EEPROM.INC     
+              EEESCRIBIR2   0x0007b9    program     static Librerias\EEPROM.INC     
+               FINPAGINA0   0x0007c2    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+                  BINAD99   0x000900    program     static Librerias\BINAD99.INC    
+                 BINAD991   0x000902    program     static Librerias\BINAD99.INC    
+                 BINAD992   0x000906    program     static Librerias\BINAD99.INC    
+                 BINAD99E   0x00090c    program     static Librerias\BINAD99.INC    
+                 BINAD99F   0x00090f    program     static Librerias\BINAD99.INC    
+                 BINAUNIC   0x000914    program     static Librerias\BINAD99.INC    
+                 BINADECC   0x000918    program     static Librerias\BINAD99.INC    
+            DEFCONTRASENA   0x00091e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           DEFCONTRASENA2   0x000931    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           DEFCONTRASENA3   0x000956    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DEFCONTRASENAER   0x0009bf    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           DEFDURATIMBRES   0x0009d0    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DEFDURATIMBRES1   0x0009e4    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DEFDURATIMBRES2   0x000a0b    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              TIPOHORARIO   0x000a37    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             TIPOHORARIO1   0x000a39    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               INCCONTDIA   0x000a60    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              INCCONTDIA1   0x000a66    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+               DECCONTDIA   0x000a69    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+         FIJARTHORARIODIA   0x000a6f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          INCVTIPOHORARIO   0x000a99    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          DECVTIPOHORARIO   0x000a9f    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             INCDIASEMANA   0x000aa7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            INCDIASEMANA1   0x000aaf    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              COMPALARMAS   0x000ab4    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMASDZ   0x000ab9    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1Y   0x000acd    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1Z   0x000ae0    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS1ZA   0x000ae3    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS1ZB   0x000ae7    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          COMPALARMAS1ZBB   0x000aea    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             COMPALARMAS1   0x000aed    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1A   0x000b19    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1B   0x000b20    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS1C   0x000b2a    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             COMPALARMAS2   0x000b2e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS2AA   0x000b3e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS2A   0x000b3e    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           COMPALARMAS2AB   0x000b42    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          COMPALARMAS2ABB   0x000b45    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+          COMPALARMAS2ACC   0x000b48    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+            COMPALARMAS2B   0x000b6c    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+             COMPALARMAS3   0x000b78    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+              ANTESDELOGO   0x000b82    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+           LCD_DIBLOGORET   0x000e01    program     static D:\Dropbox\Galeras Digital\Reloj MA 32-2\Electronica RelojMa\relojma.asm
+
+
