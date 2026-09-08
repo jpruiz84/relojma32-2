@@ -65,11 +65,18 @@ same pixels directly; the logo does not depend on a font or substitute text.
 | LCD/frame                                   | Same measurements; `Manual/figuras/frente1.svg`                                    | LCD 71.1 mm wide; revised opening height 26.9 mm; frame approximately 76.5 × 29.4 mm. The center comes from iLCD/fLCD.                                         |
 | Keypad/frame                                | Same measurements; keypad SVG and photos                                           | Keypad 59.6 × 56.7 mm; frame approximately 65 × 62.1 mm; layout/legends from manual and product photo.                                                         |
 | Enclosure depth                             | Connector panel `110.6 × 99.6` in measurements; product perspectives               | Approximately 99.6 mm, inferred as enclosure depth from panel dimensions. Not independently measured.                                                          |
-| Bottom power input, fuse and terminal block | `Caja/conectores.dxf`, dimensions spreadsheet, underside drawing and product photo | Positions interpreted from the panel plane; plugs and cable shapes are reconstructed.                                                                          |
+| Bottom power input, fuse and terminal block | `Caja/conectores.dxf`, dimensions spreadsheet, underside drawing and product photo | Layout follows `Manual/figuras/inferior1.eps`: three-contact input at lower left, fuse at upper right, four-screw terminal block and looped leads at lower right. Depths and material finishes are reconstructed.                                                                          |
 | Cover fold, vents, screws, rocker           | Product views, installed views and top drawing                                     | Reconstructed geometry. Wall thickness, exact vent dimensions and fastener head shape are estimates.                                                           |
 | Relay, internal cables and assembly offsets | BOM, hole locations, netlist and exterior mounting clues                           | Functional locations and plausible cable routes, not an observed interior photograph. Source files do not supply a complete as-built harness or relay mesh.    |
-| LCD appearance                              | Blue product photo and green installed units; bundled `LCD Display Grid.ttf`       | Selectable color; shared live content between the 3D texture and accessible LCD. The six CGRAM logo glyphs are represented as a short menu logo approximation. |
+| LCD appearance                              | Blue product photo and green installed units; bundled `LCD Display Grid.ttf`       | Selectable color; shared live content between the 3D texture and accessible LCD. All 48 CGRAM bytes from `LCD_DIBLOGORET` are rendered directly in both displays. |
 | Bell sound                                  | No original sound recording supplied                                               | Optional synthesized indication controlled by the simulated protected contact.                                                                                 |
+
+The tall white underside label is rendered directly from `Manual/figuras/inferior1.eps`
+into `assets/underside-label.png`, preserving the original logo, embedded typefaces,
+specifications, QR code and “HECHO EN COLOMBIA”. It sits at the upper left of the
+connector panel in the manual’s orientation. Its approximately 30 × 40 mm size and
+placement are scaled from the drawing, rather than independently measured. The
+printed ratings are historical artwork and are reproduced without editing.
 
 All 15 raster images under `Pagina/`, `Manual/figuras/`, `Folleto/partes/`, and `Folleto/Fotos/` are indexed and available in the app, including duplicates, signatures, QR artwork and the brochure cover. Not every image supplies geometry: installation photos guide orientation and green LCD appearance; marketing graphics remain references rather than fictitious device surfaces. Five vector diagrams are also linked. The native model is copied byte-for-byte and its SHA-256 is recorded in `design.json`.
 

@@ -1,5 +1,5 @@
 """Rebuild browser assets and provenance from the original design; no network required."""
-import json, re, shutil, hashlib
+import json, re, shutil, hashlib, subprocess
 from pathlib import Path
 from PIL import Image, ImageOps
 ROOT = Path(__file__).resolve().parents[2]
@@ -15,6 +15,18 @@ copy('Manual/manual.pdf', 'manual.pdf')
 copy('Circuitos/Version 2/placa real.PDF', 'pcb.pdf')
 copy('Manual/figuras/logo galeras digital.svg', 'logo.svg')
 copy('Otros/etiqueta.svg', 'label.svg')
+# Exact white label from the manual's EPS, including embedded fonts and QR.
+# PostScript crop in points: x=43.25, y=208.3, width=86, height=115.
+# Render directly, not via the editable SVG (which depends on unavailable fonts).
+subprocess.run([
+    'gs', '-q', '-dSAFER', '-dBATCH', '-dNOPAUSE', '-dFIXEDMEDIA',
+    '-sDEVICE=png16m', '-r720', '-g860x1150',
+    '-dTextAlphaBits=4', '-dGraphicsAlphaBits=4',
+    f'-sOutputFile={OUT / "underside-label.png"}',
+    '-c', '-43.25 -208.3 translate', '-f',
+    str(ROOT / 'Manual/figuras/inferior1.eps'),
+], check=True)
+
 for name in ['frente1','inferior1','superior1','teclado1','conpotencia']:
     copy(f'Manual/figuras/{name}.svg', f'{name}.svg')
 (OUT / 'firmware.asm.txt').write_text((ROOT / 'relojma.asm').read_text(encoding='latin1'))

@@ -54,11 +54,11 @@ Three.js integrations follow the official [TDSLoader](https://threejs.org/docs/p
 Generated browser assets are committed so running the app does not require Python. To regenerate after changing archive files:
 
 ```sh
-# Python 3 with Pillow installed
+# Python 3 with Pillow and Ghostscript (gs) installed
 npm run assets
 ```
 
-`prepare_assets.py` copies the native board, LCD font and original documents, makes web-sized photo copies, and generates `public/assets/design.json`. This manifest preserves original relative filenames and the board's SHA-256. It also includes the 98 routed paths from the ARES session file. The original archive files are left untouched.
+`prepare_assets.py` copies the native board, LCD font and original documents, renders the exact white underside label from `Manual/figuras/inferior1.eps`, makes web-sized photo copies, and generates `public/assets/design.json`. This manifest preserves original relative filenames and the board's SHA-256. It also includes the 98 routed paths from the ARES session file. The original archive files are left untouched.
 
 ## Files
 

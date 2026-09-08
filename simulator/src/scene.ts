@@ -295,7 +295,7 @@ export class DeviceScene {
     this.controls.dampingFactor = 0.08;
     this.controls.minDistance = 15;
     this.controls.maxDistance = 85;
-    this.controls.maxPolarAngle = Math.PI * 0.88;
+    this.controls.maxPolarAngle = Math.PI * 0.98;
     this.controls.autoRotateSpeed = 0.5;
     this.controls.addEventListener("start", () => (this.targetCamera = null));
     const pmrem = new THREE.PMREMGenerator(this.renderer);
@@ -474,73 +474,131 @@ export class DeviceScene {
     this.rocker.userData.switch = true;
     plaque(this.rocker, "●", 0.28, 0.28, 0, 0.4, 0.12);
     this.selectionObjects.set("J5", this.rocker);
-    // Bottom connector panel, rotated so ports project through the bottom of the enclosure.
+    // Underside layout follows Manual/figuras/inferior1.eps: label and fuse
+    // above the three-contact input and two-pole screw terminal block.
     const ports = new THREE.Group();
+    ports.name = "underside-panel";
     ports.position.set(0, -7.59, 0);
     ports.rotation.x = Math.PI / 2;
     this.base.add(ports);
-    cylinder(ports, 0.45, 0.16, -3.75, 2.7, 0.05, metal);
-    cylinder(ports, 0.34, 0.65, -3.75, 2.7, 0.38, black);
-    cylinder(ports, 0.22, 0.68, -3.75, 2.7, 0.7, metal);
-    cylinder(ports, 0.13, 0.72, -3.75, 2.7, 1.0, black);
-    const fuse = cylinder(ports, 0.66, 0.75, 3.55, -2.05, 0.35, black);
+
+    const inputX = -3.75,
+      inputY = -3.8;
+    cylinder(ports, 0.94, 0.14, inputX, inputY, 0.1, metal);
+    cylinder(ports, 0.83, 0.18, inputX, inputY, 0.21, black);
+    const socketFace = new THREE.MeshStandardMaterial({
+      color: 0xdddcd1,
+      roughness: 0.65,
+    });
+    cylinder(ports, 0.73, 0.04, inputX, inputY, 0.32, socketFace);
+    for (const [dx, dy] of [
+      [-0.2, 0.36],
+      [0.35, 0],
+      [-0.2, -0.36],
+    ]) {
+      cylinder(ports, 0.18, 0.025, inputX + dx, inputY + dy, 0.35, metal);
+      cylinder(ports, 0.12, 0.028, inputX + dx, inputY + dy, 0.368, black);
+    }
+    box(ports, 0.14, 0.35, 0.055, inputX - 0.67, inputY, 0.355, black);
+
+    const fuseX = 3.82,
+      fuseY = 2.85;
+    cylinder(ports, 0.91, 0.12, fuseX, fuseY, 0.12, black);
+    const fuse = cylinder(ports, 0.81, 0.45, fuseX, fuseY, 0.35, black);
     fuse.userData.ref = "FUSE";
     this.selectionObjects.set("FUSE", fuse);
-    for (let i = 0; i < 20; i++) {
-      const a = (i * Math.PI) / 10;
+    for (let i = 0; i < 28; i++) {
+      const a = (i * Math.PI) / 14;
       box(
         ports,
         0.055,
-        0.12,
-        0.45,
-        3.55 + Math.cos(a) * 0.62,
-        -2.05 + Math.sin(a) * 0.62,
-        0.65,
+        0.07,
+        0.28,
+        fuseX + Math.cos(a) * 0.8,
+        fuseY + Math.sin(a) * 0.8,
+        0.38,
         black,
       );
     }
-    plaque(ports, "FUSE", 0.75, 0.3, 3.55, -2.05, 0.74, { fg: "#aaa" });
-    for (const yy of [2.52, 3.65]) {
-      box(
+    const fuseRim = new THREE.Mesh(
+      new THREE.TorusGeometry(0.7, 0.018, 8, 48),
+      new THREE.MeshStandardMaterial({ color: 0x767a76, roughness: 0.65 }),
+    );
+    fuseRim.position.set(fuseX, fuseY, 0.58);
+    ports.add(fuseRim);
+    plaque(ports, "FUSE\n↻", 1.1, 1.1, fuseX, fuseY, 0.582, {
+      fg: "#b9bab4",
+      font: 112,
+    });
+
+    const terminalX = 1.5;
+    const terminalMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xf4f1e5,
+      roughness: 0.42,
+      metalness: 0,
+      transmission: 0.08,
+      thickness: 0.3,
+    });
+    box(ports, 0.5, 0.45, 0.62, terminalX, -3.4, 0.39, terminalMaterial, 0.04);
+    for (const yy of [-2.82, -3.98]) {
+      box(ports, 2.18, 0.83, 0.65, terminalX, yy, 0.4, terminalMaterial, 0.055);
+      for (const dx of [-0.43, 0.43]) {
+        cylinder(ports, 0.34, 0.04, terminalX + dx, yy, 0.75, black);
+        cylinder(ports, 0.28, 0.07, terminalX + dx, yy, 0.78, metal);
+        box(ports, 0.04, 0.43, 0.014, terminalX + dx, yy, 0.822, black);
+      }
+      // The two looped leads shown in the underside drawing.
+      cable(
         ports,
-        1.18,
-        0.88,
-        0.85,
-        3.3,
-        yy,
-        0.72,
-        new THREE.MeshPhysicalMaterial({
-          color: 0xe5e5d8,
-          transparent: true,
-          opacity: 0.75,
-          roughness: 0.35,
-        }),
-        0.06,
+        [
+          V(2.56, yy + 0.22, 0.35),
+          V(3.7, yy + 0.22, 0.35),
+          V(4.2, yy + 0.18, 0.35),
+          V(4.28, yy, 0.35),
+          V(4.2, yy - 0.18, 0.35),
+          V(3.7, yy - 0.22, 0.35),
+          V(2.56, yy - 0.22, 0.35),
+        ],
+        0xe8e5db,
+        0.08,
       );
-      cylinder(ports, 0.21, 0.2, 3.3, yy, 1.22, metal);
-      box(ports, 0.23, 0.035, 0.02, 3.3, yy, 1.331, black);
     }
-    plaque(
-      ports,
-      "RELOJ MA 32-2\nGALERAS DIGITAL\n12 VDC   ·   15 A MAX",
-      3.5,
-      2.5,
-      -2.9,
-      -1.6,
-      0.09,
-      { bg: "#d4d3c9", fg: "#34383a", font: 33 },
+
+    // Rendered directly from the EPS so its embedded fonts, QR and logo survive
+    // without substitution. The original printed ratings are preserved verbatim.
+    const labelTexture = new THREE.TextureLoader().load(
+      "assets/underside-label.png",
+      (texture) => {
+        if (this.disposed) {
+          texture.dispose();
+          return;
+        }
+        this.host.dataset.undersideLabelLoaded = "true";
+      },
+      undefined,
+      () => {
+        if (!this.disposed)
+          this.callbacks.error(
+            "The original underside label could not be loaded. Reload to try again.",
+          );
+      },
     );
-    cable(
-      this.base,
-      [
-        V(-3.75, -8.9, -2.7),
-        V(-4.4, -9.1, -3),
-        V(-7, -8.0, -5),
-        V(-11, -8.0, -5),
-      ],
-      0x252525,
-      0.12,
+    labelTexture.colorSpace = THREE.SRGBColorSpace;
+    labelTexture.anisotropy = Math.min(
+      8,
+      this.renderer.capabilities.getMaxAnisotropy(),
     );
+    const label = new THREE.Mesh(
+      new THREE.PlaneGeometry(3, (3 * 115) / 86),
+      new THREE.MeshStandardMaterial({
+        map: labelTexture,
+        roughness: 0.88,
+        metalness: 0,
+      }),
+    );
+    label.name = "original-white-label";
+    label.position.set(-2.98, 1.85, 0.015);
+    ports.add(label);
     // Original ARES geometry is already in centimetres, with component-side +Z.
     this.pcb.position.set(-4.7625, 4.9, -3.7);
     new TDSLoader().load(
@@ -731,13 +789,13 @@ export class DeviceScene {
     this.relayLight.visible = false;
     cable(
       this.wires,
-      [V(-2.86, -2.1, -3.2), V(-4.4, -3.5, -2.3), V(-3.75, -6.5, -2.7)],
+      [V(-2.86, -2.1, -3.2), V(-4.4, -3.5, -2.3), V(-3.75, -7.35, 3.8)],
       0xb14236,
       0.07,
     );
     cable(
       this.wires,
-      [V(-2.6, -2.1, -3.2), V(-4, -3.6, -2.4), V(-3.5, -6.5, -2.7)],
+      [V(-2.6, -2.1, -3.2), V(-4, -3.6, -2.4), V(-3.5, -7.35, 3.8)],
       0x24262a,
       0.07,
     );
@@ -755,13 +813,13 @@ export class DeviceScene {
     );
     cable(
       this.wires,
-      [V(3.7, -6, -1.1), V(4.4, -6.4, 1), V(3.6, -7.4, 2.0)],
+      [V(3.7, -6, -1.1), V(4.4, -6.4, 1), V(3.82, -7.35, -2.85)],
       0xe4dec5,
       0.1,
     );
     cable(
       this.wires,
-      [V(3.2, -6, -1.1), V(2, -6.4, 2.7), V(3.3, -7.4, -2.8)],
+      [V(3.2, -6, -1.1), V(2, -6.4, 2.7), V(1.5, -7.35, 2.82)],
       0xe4dec5,
       0.1,
     );
@@ -852,14 +910,15 @@ export class DeviceScene {
   }
   resetView(view: "perspective" | "front" | "back" | "bottom" = "perspective") {
     const opened = this.options.mode !== "assembled";
-    this.targetLook = opened ? V(-5, 0, 1) : V(0, 0, 0);
+    this.targetLook =
+      view === "bottom" ? V(0, -7.5, 0) : opened ? V(-5, 0, 1) : V(0, 0, 0);
     this.targetCamera =
       view === "front"
         ? V(opened ? -5 : 0, 0, opened ? 61 : 42)
         : view === "back"
           ? V(0, 4, -43)
           : view === "bottom"
-            ? V(10, -32, 20)
+            ? V(0, -33, 2.2)
             : opened
               ? V(18, 20, 53)
               : V(17, 16, 38);
