@@ -1,0 +1,7 @@
+# Generated browser copies retain whitespace from the original design archive.
+simulator/public/assets/* linguist-generated=true -whitespace
+# Some original PDF exports are ASCII internally; never treat them as text diffs.
+simulator/public/assets/*.pdf binary
+simulator/public/assets/*.3ds binary
+simulator/public/assets/*.ttf binary
+simulator/public/assets/*.webp binary

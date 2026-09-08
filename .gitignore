@@ -1,0 +1,6 @@
+# Web simulator build and local tooling
+simulator/node_modules/
+simulator/dist/
+simulator/test-results/
+simulator/playwright-report/
+simulator/*.tsbuildinfo

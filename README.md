@@ -7,6 +7,41 @@ el manual de usuario, el folleto comercial y los archivos de producción.
 
 ![Reloj MA 32-2](Manual/figuras/principal%201000p.png)
 
+## Simulador web 3D
+
+La aplicación en [`simulator/`](simulator/) permite operar el reloj con su teclado original,
+programar los cuatro horarios, acelerar el tiempo y retirar la tapa para inspeccionar los
+circuitos. Usa el modelo 3D original de ARES, las medidas de la caja, las fotografías y una
+implementación funcional basada en el ensamblador.
+
+```bash
+cd simulator
+npm ci
+npm run dev
+```
+
+Incluye importación/exportación de EEPROM `.MCH`, protección por contraseña, respaldo de hora,
+contacto de potencia, fusible y sonido opcional. Consulte el [README del simulador](simulator/README.md)
+y las [notas de fidelidad](simulator/docs/FIDELITY.md) para las fuentes, pruebas, detalles inferidos
+y diferencias frente a una emulación del PIC a nivel de instrucciones.
+
+El logotipo del menú LCD reproduce exactamente los 48 bytes de `LCD_DIBLOGORET`: seis
+caracteres de 5 × 8 píxeles en las últimas seis posiciones de la primera línea, tanto
+en la pantalla 3D como en el panel de controles.
+
+Para generar la versión de producción y ejecutar las pruebas:
+
+```bash
+npm run build   # Archivos estáticos en simulator/dist/
+npm test       # Pruebas de firmware, EEPROM y bitmap del logotipo
+npm run test:e2e # Pruebas de interacción en navegador
+```
+
+El [despliegue como servicio](simulator/deploy/README.md) usa HTTPS, renovación automática
+del certificado, inicio al arrancar el servidor y acceso mediante un enlace privado
+aleatorio. La dirección del servidor y el enlace de acceso se configuran fuera del
+repositorio. La guía incluye actualización, reversión y revocación del enlace.
+
 ## Descripción del producto
 
 El Reloj MA 32-2 es un dispositivo electrónico con reloj calendario que activa un timbre,
@@ -98,7 +133,7 @@ El bucle principal ejecuta `SLEEP`; todo el trabajo ocurre en la rutina de inter
 
 - **INT (RB0)**: cada flanco de la señal de 1 Hz del DS1307. El firmware alterna el flanco
   activo para despertar cada 500 ms, lee la hora por I²C, refresca la pantalla (con los dos
-  puntos parpadeando), descuenta el temporizador de la luz de fondo y comprueba si la alarma
+  puntos fijos en esta revisión), descuenta el temporizador de la luz de fondo y comprueba si la alarma
   más cercana coincide con la hora actual. Si coincide, cierra el contacto según el tipo de
   timbrado y recalcula la siguiente alarma (`COMPALARMAS`).
 - **RBIF (RB4–RB7)**: pulsación de tecla. `M` entra al menú (pidiendo contraseña si está
@@ -119,8 +154,8 @@ Patrones de timbrado (TC y TL son las duraciones configuradas en segundos):
 |---|---|
 | `0x02`–`0xF1` | 120 alarmas de 2 bytes. Alarma *N* (1–30) del horario *H* (1–4) en `2 × (N + 30 × (H − 1))` |
 | `0xF2`–`0xF8` | Tipo de horario de lunes a domingo (0 = OFF, 1–4) |
-| `0xFB` | Duración del timbre corto (segundos) |
-| `0xFC` | Duración del timbre largo (segundos) |
+| `0xFB` | Duración del timbre corto menos uno (0–15 representa 1–16 segundos) |
+| `0xFC` | Duración del timbre largo menos uno (0–15 representa 1–16 segundos) |
 | `0xFD` | Bit 0: contraseña habilitada |
 | `0xFE`–`0xFF` | Contraseña de 4 dígitos (2 bytes BCD) |
 
@@ -133,7 +168,7 @@ Formato de cada alarma:
 
 El código ocupa las páginas 0 y 1 del PIC (2675 de 8454 palabras, 31 %). La página 0 contiene el
 programa principal, la página 1 (`0x900`) los menús de configuración y `COMPALARMAS`, y en
-`0xE01` se ubica el logotipo que se dibuja en el LCD al arrancar. El código comprueba con
+`0xE01` se ubica el logotipo que se carga en la CGRAM al arrancar y se muestra en el menú. El código comprueba con
 directivas `ERROR` que ninguna sección invada la siguiente.
 
 ### Compilación
